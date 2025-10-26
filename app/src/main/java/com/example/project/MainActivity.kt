@@ -94,7 +94,8 @@ fun PlaylistMakerScreen() {
                     text = "Поиск",
                     iconResId = android.R.drawable.ic_menu_search,
                     onClick = {
-                        Toast.makeText(context, "Нажата кнопка \"Поиск\"", Toast.LENGTH_SHORT).show()
+                        val intent = android.content.Intent(context, SearchActivity::class.java)
+                        context.startActivity(intent)
                     }
                 )
 
@@ -118,7 +119,8 @@ fun PlaylistMakerScreen() {
                     text = "Настройки",
                     iconResId = R.drawable.ic_settings_gear,
                     onClick = {
-                        Toast.makeText(context, "Нажата кнопка \"Настройки\"", Toast.LENGTH_SHORT).show()
+                        val intent = android.content.Intent(context, SettingsActivity::class.java)
+                        context.startActivity(intent)
                     }
                 )
             }
