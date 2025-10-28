@@ -1,8 +1,5 @@
 package com.example.project
 
-import android.os.Bundle
-import androidx.activity.ComponentActivity
-import androidx.activity.compose.setContent
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -18,12 +15,10 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Clear
 import androidx.compose.material.icons.filled.Search
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.OutlinedTextFieldDefaults
-import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateOf
@@ -39,26 +34,12 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.project.ui.theme.ProjectTheme
 
-class SearchActivity : ComponentActivity() {
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        setContent {
-            ProjectTheme {
-                Surface(
-                    modifier = Modifier.fillMaxSize(),
-                    color = Color.White
-                ) {
-                    SearchScreen()
-                }
-            }
-        }
-    }
-}
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun SearchScreen() {
-    val context = LocalContext.current
+fun SearchScreen(
+    onBackClick: () -> Unit
+) {
+    LocalContext.current
     val searchQuery = remember { mutableStateOf("") }
 
     Column(
@@ -80,7 +61,7 @@ fun SearchScreen() {
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 IconButton(
-                    onClick = { (context as? ComponentActivity)?.finish() },
+                    onClick = onBackClick,
                     modifier = Modifier.size(24.dp)
                 ) {
                     Icon(
@@ -166,6 +147,8 @@ fun SearchScreen() {
 @Composable
 fun SearchScreenPreview() {
     ProjectTheme {
-        SearchScreen()
+        SearchScreen(
+            onBackClick = {}
+        )
     }
 }

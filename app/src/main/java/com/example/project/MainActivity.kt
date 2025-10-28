@@ -36,6 +36,9 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.navigation.compose.NavHost
+import androidx.navigation.compose.composable
+import androidx.navigation.compose.rememberNavController
 import com.example.project.ui.theme.ProjectTheme
 
 class MainActivity : ComponentActivity() {
@@ -47,7 +50,7 @@ class MainActivity : ComponentActivity() {
                     modifier = Modifier.fillMaxSize(),
                     color = Color(0xFF3772E7)
                 ) {
-                    PlaylistMakerScreen()
+                    PlaylistHost()
                 }
             }
         }
@@ -55,7 +58,10 @@ class MainActivity : ComponentActivity() {
 }
 
 @Composable
-fun PlaylistMakerScreen() {
+fun PlaylistMakerScreen(
+    onSearchClick: () -> Unit,
+    onSettingsClick: () -> Unit
+) {
     val context = LocalContext.current
 
     Column(
@@ -93,10 +99,7 @@ fun PlaylistMakerScreen() {
                 MenuButton(
                     text = "Поиск",
                     iconResId = android.R.drawable.ic_menu_search,
-                    onClick = {
-                        val intent = android.content.Intent(context, SearchActivity::class.java)
-                        context.startActivity(intent)
-                    }
+                    onClick = onSearchClick
                 )
 
                 MenuButton(
@@ -118,10 +121,7 @@ fun PlaylistMakerScreen() {
                 MenuButton(
                     text = "Настройки",
                     iconResId = R.drawable.ic_settings_gear,
-                    onClick = {
-                        val intent = android.content.Intent(context, SettingsActivity::class.java)
-                        context.startActivity(intent)
-                    }
+                    onClick = onSettingsClick
                 )
             }
         }
@@ -187,10 +187,43 @@ fun MenuButton(
     }
 }
 
+
+@Composable
+fun PlaylistHost() {
+    val navController = rememberNavController()
+
+    NavHost(
+        navController = navController,
+        startDestination = Screen.Main.route
+    ) {
+        composable(Screen.Main.route) {
+            PlaylistMakerScreen(
+                onSearchClick = { navController.navigate(Screen.Search.route) },
+                onSettingsClick = { navController.navigate(Screen.Settings.route) }
+            )
+        }
+
+        composable(Screen.Search.route) {
+            SearchScreen(
+                onBackClick = { navController.popBackStack() }
+            )
+        }
+
+        composable(Screen.Settings.route) {
+            SettingsScreen(
+                onBackClick = { navController.popBackStack() }
+            )
+        }
+    }
+}
+
 @Preview(showBackground = true, widthDp = 360, heightDp = 800)
 @Composable
 fun PlaylistMakerScreenPreview() {
     ProjectTheme {
-        PlaylistMakerScreen()
+        PlaylistMakerScreen(
+            onSearchClick = {},
+            onSettingsClick = {}
+        )
     }
 }

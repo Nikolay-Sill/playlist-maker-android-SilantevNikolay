@@ -2,10 +2,7 @@ package com.example.project
 
 import android.content.Context
 import android.content.Intent
-import android.os.Bundle
 import android.widget.Toast
-import androidx.activity.ComponentActivity
-import androidx.activity.compose.setContent
 import androidx.compose.animation.animateColorAsState
 import androidx.compose.animation.core.animateDpAsState
 import androidx.compose.animation.core.tween
@@ -27,7 +24,6 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
-import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -43,32 +39,21 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.example.project.ui.theme.ProjectTheme
 import androidx.core.net.toUri
+import com.example.project.ui.theme.ProjectTheme
 
-class SettingsActivity : ComponentActivity() {
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        setContent {
-            ProjectTheme {
-                Surface(
-                    modifier = Modifier.fillMaxSize(),
-                    color = Color.White
-                ) {
-                    SettingsScreen()
-                }
-            }
-        }
-    }
-}
 
 @Composable
-fun SettingsScreen() {
+fun SettingsScreen(
+    onBackClick: () -> Unit
+) {
     val context = LocalContext.current
     val darkThemeEnabled = remember { mutableStateOf(false) }
 
     Column(
-        modifier = Modifier.fillMaxSize()
+        modifier = Modifier
+            .fillMaxSize()
+            .background(Color.White)
     ) {
         Box(
             modifier = Modifier
@@ -84,7 +69,7 @@ fun SettingsScreen() {
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 IconButton(
-                    onClick = { (context as? ComponentActivity)?.finish() },
+                    onClick = onBackClick,
                     modifier = Modifier.size(24.dp)
                 ) {
                     Icon(
@@ -108,6 +93,7 @@ fun SettingsScreen() {
         Column(
             modifier = Modifier
                 .fillMaxSize()
+                .background(Color.White)
                 .padding(horizontal = 16.dp),
             verticalArrangement = Arrangement.spacedBy(0.dp)
         ) {
@@ -206,6 +192,7 @@ fun SettingsItem(
         modifier = Modifier
             .fillMaxWidth()
             .height(61.dp)
+            .background(Color.White)
             .clickable { onClick?.invoke() }
     ) {
         Row(
@@ -299,6 +286,8 @@ fun CustomThumbSwitch(
 @Composable
 fun SettingsScreenPreview() {
     ProjectTheme {
-        SettingsScreen()
+        SettingsScreen(
+            onBackClick = {}
+        )
     }
 }

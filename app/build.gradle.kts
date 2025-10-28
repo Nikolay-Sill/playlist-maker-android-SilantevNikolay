@@ -41,6 +41,8 @@ android {
 
 dependencies {
 
+    implementation("androidx.core:core-ktx:1.16.0")
+    implementation("androidx.navigation:navigation-compose:2.9.5")
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.lifecycle.runtime.ktx)
     implementation(libs.androidx.activity.compose)
