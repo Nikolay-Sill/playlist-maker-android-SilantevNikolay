@@ -1,4 +1,4 @@
-package com.example.project
+package com.example.project.ui.activity
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
@@ -32,6 +32,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.example.project.R
 import com.example.project.ui.theme.ProjectTheme
 
 

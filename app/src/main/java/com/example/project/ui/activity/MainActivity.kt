@@ -1,5 +1,6 @@
-package com.example.project
+package com.example.project.ui.activity
 
+import android.R
 import android.os.Bundle
 import android.widget.Toast
 import androidx.activity.ComponentActivity
@@ -39,6 +40,7 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import com.example.project.Screen
 import com.example.project.ui.theme.ProjectTheme
 
 class MainActivity : ComponentActivity() {
@@ -98,13 +100,13 @@ fun PlaylistMakerScreen(
             ) {
                 MenuButton(
                     text = "Поиск",
-                    iconResId = android.R.drawable.ic_menu_search,
+                    iconResId = R.drawable.ic_menu_search,
                     onClick = onSearchClick
                 )
 
                 MenuButton(
                     text = "Плейлисты",
-                    iconResId = R.drawable.ic_playlists,
+                    iconResId = com.example.project.R.drawable.ic_playlists,
                     onClick = {
                         Toast.makeText(context, "Нажата кнопка \"Плейлисты\"", Toast.LENGTH_SHORT).show()
                     }
@@ -112,7 +114,7 @@ fun PlaylistMakerScreen(
 
                 MenuButton(
                     text = "Избранное",
-                    iconResId = R.drawable.ic_favorite_outline,
+                    iconResId = com.example.project.R.drawable.ic_favorite_outline,
                     onClick = {
                         Toast.makeText(context, "Нажата кнопка \"Избранное\"", Toast.LENGTH_SHORT).show()
                     }
@@ -120,7 +122,7 @@ fun PlaylistMakerScreen(
 
                 MenuButton(
                     text = "Настройки",
-                    iconResId = R.drawable.ic_settings_gear,
+                    iconResId = com.example.project.R.drawable.ic_settings_gear,
                     onClick = onSettingsClick
                 )
             }
@@ -178,7 +180,7 @@ fun MenuButton(
             }
 
             Icon(
-                painter = painterResource(id = R.drawable.ic_arrow_right),
+                painter = painterResource(id = com.example.project.R.drawable.ic_arrow_right),
                 contentDescription = "Стрелка",
                 modifier = Modifier.size(24.dp),
                 tint = Color(0xFFAEAFB4)

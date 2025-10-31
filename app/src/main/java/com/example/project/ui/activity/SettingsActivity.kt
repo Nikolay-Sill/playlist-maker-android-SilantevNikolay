@@ -1,4 +1,4 @@
-package com.example.project
+package com.example.project.ui.activity
 
 import android.content.Context
 import android.content.Intent
@@ -40,6 +40,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.core.net.toUri
+import com.example.project.R
 import com.example.project.ui.theme.ProjectTheme
 
 
