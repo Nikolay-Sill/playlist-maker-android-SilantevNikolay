@@ -1,6 +1,6 @@
 package com.example.project.ui.activity
 
-import android.R
+import android.R.drawable.ic_menu_search
 import android.os.Bundle
 import android.widget.Toast
 import androidx.activity.ComponentActivity
@@ -40,7 +40,7 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
-import com.example.project.Screen
+import com.example.project.ui.navigation.Screen
 import com.example.project.ui.theme.ProjectTheme
 
 class MainActivity : ComponentActivity() {
@@ -100,7 +100,7 @@ fun PlaylistMakerScreen(
             ) {
                 MenuButton(
                     text = "Поиск",
-                    iconResId = R.drawable.ic_menu_search,
+                    iconResId = ic_menu_search,
                     onClick = onSearchClick
                 )
 
