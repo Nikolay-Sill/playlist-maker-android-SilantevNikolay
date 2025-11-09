@@ -3,6 +3,7 @@ package com.example.project.data.network
 import com.example.project.data.dto.TracksSearchRequest
 import com.example.project.data.dto.TracksSearchResponse
 import com.example.project.domain.NetworkClient
+import com.example.project.domain.Track
 import com.example.project.domain.TracksRepository
 import kotlinx.coroutines.delay
 
@@ -16,7 +17,8 @@ class TracksRepositoryImpl(private val networkClient: NetworkClient) : TracksRep
                 val seconds = it.trackTimeMillis / 1000
                 val minutes = seconds / 60
                 val trackTime = "%02d".format(minutes) + ":" + "%02d".format(seconds - minutes * 60)
-                Track(it.trackName, it.artistName, trackTime) }
+                Track(it.trackName, it.artistName, trackTime)
+            }
         } else {
             emptyList()
         }

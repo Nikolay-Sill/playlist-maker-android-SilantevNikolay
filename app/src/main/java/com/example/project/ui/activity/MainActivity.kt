@@ -29,9 +29,9 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
@@ -40,8 +40,13 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import com.example.project.R
 import com.example.project.ui.navigation.Screen
+import com.example.project.ui.theme.PrimaryBlue
 import com.example.project.ui.theme.ProjectTheme
+import com.example.project.ui.theme.TextPrimary
+import com.example.project.ui.theme.TextSecondary
+import com.example.project.ui.theme.White
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -50,7 +55,7 @@ class MainActivity : ComponentActivity() {
             ProjectTheme {
                 Surface(
                     modifier = Modifier.fillMaxSize(),
-                    color = Color(0xFF3772E7)
+                    color = PrimaryBlue
                 ) {
                     PlaylistHost()
                 }
@@ -73,12 +78,12 @@ fun PlaylistMakerScreen(
             modifier = Modifier
                 .fillMaxWidth()
                 .height(56.dp)
-                .background(Color(0xFF3772E7)),
+                .background(PrimaryBlue),
             contentAlignment = Alignment.CenterStart
         ) {
             Text(
-                text = "Playlist maker",
-                color = Color.White,
+                text = stringResource(R.string.app_name),
+                color = White,
                 fontSize = 20.sp,
                 fontWeight = FontWeight.Bold,
                 modifier = Modifier.padding(start = 16.dp)
@@ -90,7 +95,7 @@ fun PlaylistMakerScreen(
                 .fillMaxWidth()
                 .fillMaxHeight()
                 .clip(RoundedCornerShape(topStart = 16.dp, topEnd = 16.dp))
-                .background(Color.White)
+                .background(White)
         ) {
             Column(
                 modifier = Modifier
@@ -99,30 +104,36 @@ fun PlaylistMakerScreen(
                 verticalArrangement = Arrangement.spacedBy(0.dp)
             ) {
                 MenuButton(
-                    text = "Поиск",
+                    text = stringResource(R.string.search),
                     iconResId = ic_menu_search,
                     onClick = onSearchClick
                 )
 
                 MenuButton(
-                    text = "Плейлисты",
-                    iconResId = com.example.project.R.drawable.ic_playlists,
+                    text = stringResource(R.string.playlists),
+                    iconResId = R.drawable.ic_playlists,
                     onClick = {
-                        Toast.makeText(context, "Нажата кнопка \"Плейлисты\"", Toast.LENGTH_SHORT).show()
+                        Toast.makeText(
+                            context,
+                            R.string.playlists_toast,
+                            Toast.LENGTH_SHORT).show()
                     }
                 )
 
                 MenuButton(
-                    text = "Избранное",
-                    iconResId = com.example.project.R.drawable.ic_favorite_outline,
+                    text = stringResource(R.string.favorites),
+                    iconResId = R.drawable.ic_favorite_outline,
                     onClick = {
-                        Toast.makeText(context, "Нажата кнопка \"Избранное\"", Toast.LENGTH_SHORT).show()
+                        Toast.makeText(
+                            context,
+                            R.string.favorites_toast,
+                            Toast.LENGTH_SHORT).show()
                     }
                 )
 
                 MenuButton(
-                    text = "Настройки",
-                    iconResId = com.example.project.R.drawable.ic_settings_gear,
+                    text = stringResource(R.string.settings),
+                    iconResId = R.drawable.ic_settings_gear,
                     onClick = onSettingsClick
                 )
             }
@@ -144,7 +155,7 @@ fun MenuButton(
             .height(66.dp),
         shape = RoundedCornerShape(0.dp),
         colors = CardDefaults.cardColors(
-            containerColor = Color.White
+            containerColor = White
         ),
         elevation = CardDefaults.cardElevation(
             defaultElevation = 0.dp
@@ -165,14 +176,14 @@ fun MenuButton(
                     painter = painterResource(id = iconResId),
                     contentDescription = null,
                     modifier = Modifier.size(24.dp),
-                    tint = Color(0xFF1A1B22)
+                    tint = TextPrimary
                 )
 
                 Spacer(modifier = Modifier.width(12.dp))
 
                 Text(
                     text = text,
-                    color = Color(0xFF1A1B22),
+                    color = TextPrimary ,
                     fontSize = 16.sp,
                     fontWeight = FontWeight.Medium,
                     textAlign = TextAlign.Start
@@ -180,10 +191,10 @@ fun MenuButton(
             }
 
             Icon(
-                painter = painterResource(id = com.example.project.R.drawable.ic_arrow_right),
-                contentDescription = "Стрелка",
+                painter = painterResource(id = R.drawable.ic_arrow_right),
+                contentDescription = stringResource(R.string.cd_arrow),
                 modifier = Modifier.size(24.dp),
-                tint = Color(0xFFAEAFB4)
+                tint = TextSecondary
             )
         }
     }

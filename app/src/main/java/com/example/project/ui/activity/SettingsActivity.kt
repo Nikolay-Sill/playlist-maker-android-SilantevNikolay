@@ -31,7 +31,6 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -42,6 +41,13 @@ import androidx.compose.ui.unit.sp
 import androidx.core.net.toUri
 import com.example.project.R
 import com.example.project.ui.theme.ProjectTheme
+import com.example.project.ui.theme.SurfaceWhite
+import com.example.project.ui.theme.SwitchThumbDisabled
+import com.example.project.ui.theme.SwitchThumbEnabled
+import com.example.project.ui.theme.SwitchTrackDisabled
+import com.example.project.ui.theme.SwitchTrackEnabled
+import com.example.project.ui.theme.TextPrimary
+import com.example.project.ui.theme.TextSecondary
 
 
 @Composable
@@ -54,13 +60,13 @@ fun SettingsScreen(
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .background(Color.White)
+            .background(SurfaceWhite)
     ) {
         Box(
             modifier = Modifier
                 .fillMaxWidth()
                 .height(70.dp)
-                .background(Color.White),
+                .background(SurfaceWhite),
             contentAlignment = Alignment.CenterStart
         ) {
             Row(
@@ -75,16 +81,16 @@ fun SettingsScreen(
                 ) {
                     Icon(
                         painter = painterResource(id = R.drawable.ic_arrow_back),
-                        contentDescription = "Назад",
-                        tint = Color(0xFF1A1B22)
+                        contentDescription = stringResource(R.string.cd_back),
+                        tint = TextPrimary
                     )
                 }
 
                 Spacer(modifier = Modifier.width(12.dp))
 
                 Text(
-                    text = "Настройки",
-                    color = Color(0xFF1A1B22),
+                    text = stringResource(R.string.settings_title),
+                    color = TextPrimary ,
                     fontSize = 20.sp,
                     fontWeight = FontWeight.Bold
                 )
@@ -94,12 +100,12 @@ fun SettingsScreen(
         Column(
             modifier = Modifier
                 .fillMaxSize()
-                .background(Color.White)
+                .background(SurfaceWhite)
                 .padding(horizontal = 16.dp),
             verticalArrangement = Arrangement.spacedBy(0.dp)
         ) {
             SettingsItem(
-                text = "Тёмная тема",
+                text = stringResource(R.string.dark_theme),
                 showCustomSwitch = true,
                 switchState = darkThemeEnabled.value,
                 onSwitchChange = { }
@@ -139,7 +145,7 @@ private fun shareApp(context: Context) {
         type = "text/plain"
         putExtra(Intent.EXTRA_TEXT, context.getString(R.string.share_app_text))
     }
-    val chooserIntent = Intent.createChooser(shareIntent, "Поделиться приложением")
+    val chooserIntent = Intent.createChooser(shareIntent, context.getString(R.string.share_app))
     context.startActivity(chooserIntent)
 }
 
@@ -156,7 +162,7 @@ private fun writeToDevelopers(context: Context) {
     } catch (_: Exception) {
         Toast.makeText(
             context,
-            "Почтовое приложение не найдено",
+            R.string.no_email_app,
             Toast.LENGTH_SHORT
         ).show()
     }
@@ -171,7 +177,7 @@ private fun openUserAgreement(context: Context) {
     } catch (_: Exception) {
         Toast.makeText(
             context,
-            "Браузер не найден",
+            R.string.no_browser_app,
             Toast.LENGTH_SHORT
         ).show()
     }
@@ -193,7 +199,7 @@ fun SettingsItem(
         modifier = Modifier
             .fillMaxWidth()
             .height(61.dp)
-            .background(Color.White)
+            .background(SurfaceWhite)
             .clickable { onClick?.invoke() }
     ) {
         Row(
@@ -205,7 +211,7 @@ fun SettingsItem(
         ) {
             Text(
                 text = text,
-                color = Color(0xFF1A1B22),
+                color = TextPrimary,
                 fontSize = 16.sp,
                 fontWeight = FontWeight.Medium
             )
@@ -222,15 +228,15 @@ fun SettingsItem(
                         painter = painterResource(id = iconResId),
                         contentDescription = null,
                         modifier = Modifier.size(24.dp),
-                        tint = Color(0xFFAEAFB4)
+                        tint = TextSecondary
                     )
                 }
                 showArrow -> {
                     Icon(
                         painter = painterResource(id = R.drawable.ic_arrow_right),
-                        contentDescription = "Стрелка",
+                        contentDescription = stringResource(R.string.cd_arrow),
                         modifier = Modifier.size(24.dp),
-                        tint = Color(0xFFAEAFB4)
+                        tint = TextSecondary
                     )
                 }
             }
@@ -251,12 +257,12 @@ fun CustomThumbSwitch(
     )
 
     val trackColor by animateColorAsState(
-        targetValue = if (checked) Color(0xFF3772E7) else Color(0xFFE6E8EB),
+        targetValue = if (checked) SwitchTrackEnabled  else SwitchTrackDisabled,
         animationSpec = tween(durationMillis = 200)
     )
 
     val thumbColor by animateColorAsState(
-        targetValue = if (checked) Color.White else Color(0xFFAEAFB4),
+        targetValue = if (checked) SwitchThumbEnabled else SwitchThumbDisabled,
         animationSpec = tween(durationMillis = 200)
     )
 

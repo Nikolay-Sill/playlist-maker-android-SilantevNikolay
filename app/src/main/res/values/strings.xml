@@ -1,16 +1,42 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">Project</string>
+    <string name="app_name">Playlist maker</string>
+    <string name="search">Поиск</string>
+    <string name="playlists">Плейлисты</string>
+    <string name="favorites">Избранное</string>
+    <string name="settings">Настройки</string>
 
+    <string name="search_title">Поиск</string>
+    <string name="search_hint">Поиск</string>
+    <string name="back">Назад</string>
+    <string name="enter_search_query">Введите строку для поиска</string>
+    <string name="nothing_found">Ничего не найдено</string>
+    <string name="search_error">Ошибка: %s</string>
+    <string name="clear">Очистить</string>
+
+    <string name="settings_title">Настройки</string>
+    <string name="dark_theme">Тёмная тема</string>
     <string name="share_app">Поделиться приложением</string>
     <string name="write_to_developers">Написать разработчикам</string>
     <string name="user_agreement">Пользовательское соглашение</string>
 
-    <string name="share_app_text">Посмотрите это крутое приложение Playlist Maker!</string>
+    <string name="playlists_toast">Нажата кнопка \"Плейлисты\"</string>
+    <string name="favorites_toast">Нажата кнопка \"Избранное\"</string>
+    <string name="no_email_app">Почтовое приложение не найдено</string>
+    <string name="no_browser_app">Браузер не найден</string>
 
+    <string name="cd_back">Назад</string>
+    <string name="cd_search">Поиск</string>
+    <string name="cd_clear">Очистить</string>
+    <string name="cd_arrow">Стрелка</string>
+    <string name="cd_music">Трек %s</string>
+    <string name="cd_navigate">Перейти</string>
+    <string name="cd_share">Поделиться</string>
+    <string name="cd_support">Поддержка</string>
+
+    <string name="share_app_text">Посмотрите это крутое приложение Playlist Maker!</string>
     <string name="developer_email">kolia.silantiew@yandex.ru</string>
     <string name="email_subject">Сообщение разработчикам и разработчицам приложения Playlist Maker</string>
     <string name="email_body">Спасибо разработчикам и разработчицам за крутое приложение!</string>
-
     <string name="offer_link">https://yandex.ru/legal/practicum_offer/</string>
 </resources>
