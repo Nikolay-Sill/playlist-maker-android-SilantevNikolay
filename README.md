@@ -18,3 +18,8 @@
 ### v6.0 - Спринт 6
 Создан ViewModel.
 Разработан полноценный экран поиска треков, построенный на MVVM и Jetpack Compose.
+
+### v7.0 - Спринт 7
+Создан экран, на котором размещена кнопка FloatingActionButton.
+Создана функция, отображающая ModalBottomSheet.
+При нажатии на FloatingActionButton появляется окно ModalBottomSheet.
