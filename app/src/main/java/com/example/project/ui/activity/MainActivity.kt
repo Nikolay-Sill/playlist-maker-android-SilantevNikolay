@@ -67,7 +67,8 @@ class MainActivity : ComponentActivity() {
 @Composable
 fun PlaylistMakerScreen(
     onSearchClick: () -> Unit,
-    onSettingsClick: () -> Unit
+    onSettingsClick: () -> Unit,
+    onPlaylistsClick: () -> Unit
 ) {
     val context = LocalContext.current
 
@@ -112,12 +113,7 @@ fun PlaylistMakerScreen(
                 MenuButton(
                     text = stringResource(R.string.playlists),
                     iconResId = R.drawable.ic_playlists,
-                    onClick = {
-                        Toast.makeText(
-                            context,
-                            R.string.playlists_toast,
-                            Toast.LENGTH_SHORT).show()
-                    }
+                    onClick = onPlaylistsClick
                 )
 
                 MenuButton(
@@ -212,7 +208,8 @@ fun PlaylistHost() {
         composable(Screen.Main.route) {
             PlaylistMakerScreen(
                 onSearchClick = { navController.navigate(Screen.Search.route) },
-                onSettingsClick = { navController.navigate(Screen.Settings.route) }
+                onSettingsClick = { navController.navigate(Screen.Settings.route) },
+                onPlaylistsClick = { navController.navigate(Screen.Playlists.route) }
             )
         }
 
@@ -227,8 +224,15 @@ fun PlaylistHost() {
                 onBackClick = { navController.popBackStack() }
             )
         }
+
+        composable(Screen.Playlists.route) {
+            PlaylistsScreen(
+                onBackClick = { navController.popBackStack() }
+            )
+        }
     }
 }
+
 
 @Preview(showBackground = true, widthDp = 360, heightDp = 800)
 @Composable
@@ -237,6 +241,6 @@ fun PlaylistMakerScreenPreview() {
         PlaylistMakerScreen(
             onSearchClick = {},
             onSettingsClick = {}
-        )
+        ) {}
     }
 }
