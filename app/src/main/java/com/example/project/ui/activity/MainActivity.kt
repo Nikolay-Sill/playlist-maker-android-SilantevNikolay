@@ -223,13 +223,23 @@ fun PlaylistHost() {
 
         composable(Screen.Playlists.route) {
             PlaylistsScreen(
-                onBackClick = { navController.popBackStack() }
+                onBackClick = { navController.popBackStack() },
+                onCreatePlaylistClick = { navController.navigate(Screen.CreatePlaylist.route) }
             )
         }
 
         composable(Screen.Favorites.route) {
             FavoritesScreen(
                 onBackClick = { navController.popBackStack() }
+            )
+        }
+
+        composable(Screen.CreatePlaylist.route) {
+            CreatePlaylistScreen(
+                onBackClick = { navController.popBackStack() },
+                onSaveClick = { name, description ->
+                    navController.popBackStack()
+                }
             )
         }
     }

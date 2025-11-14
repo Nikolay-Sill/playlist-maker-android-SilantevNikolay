@@ -20,12 +20,17 @@
     <string name="write_to_developers">Написать разработчикам</string>
     <string name="user_agreement">Пользовательское соглашение</string>
 
-    <string name="playlists_title">Мои плейлисты</string>
     <string name="playlists_content">Здесь будут ваши плейлисты</string>
-    <string name="playlists_toast">Нажата кнопка \"Плейлисты\"</string>
-    <string name="favorites_toast">Нажата кнопка \"Избранное\"</string>
     <string name="no_email_app">Почтовое приложение не найдено</string>
     <string name="no_browser_app">Браузер не найден</string>
+
+    <string name="playlists_empty">Плейлисты отсутствуют</string>
+    <string name="create_playlist_title">Новый плейлист</string>
+    <string name="playlist_name_required">Название*</string>
+    <string name="playlist_description_hint">Описание</string>
+    <string name="create">Создать</string>
+    <string name="cd_create_playlist">Создать новый плейлист</string>
+    <string name="cd_add_photo">Добавить фото плейлиста</string>
 
     <string name="favorites_title">Избранное</string>
     <string name="favorites_empty">Здесь будут ваши избранные треки</string>
