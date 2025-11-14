@@ -20,10 +20,15 @@
     <string name="write_to_developers">Написать разработчикам</string>
     <string name="user_agreement">Пользовательское соглашение</string>
 
+    <string name="playlists_title">Мои плейлисты</string>
+    <string name="playlists_content">Здесь будут ваши плейлисты</string>
     <string name="playlists_toast">Нажата кнопка \"Плейлисты\"</string>
     <string name="favorites_toast">Нажата кнопка \"Избранное\"</string>
     <string name="no_email_app">Почтовое приложение не найдено</string>
     <string name="no_browser_app">Браузер не найден</string>
+
+    <string name="favorites_title">Избранное</string>
+    <string name="favorites_empty">Здесь будут ваши избранные треки</string>
 
     <string name="cd_back">Назад</string>
     <string name="cd_search">Поиск</string>

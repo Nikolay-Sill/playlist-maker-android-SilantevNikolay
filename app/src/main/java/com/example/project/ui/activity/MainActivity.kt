@@ -2,7 +2,6 @@ package com.example.project.ui.activity
 
 import android.R.drawable.ic_menu_search
 import android.os.Bundle
-import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.background
@@ -68,7 +67,8 @@ class MainActivity : ComponentActivity() {
 fun PlaylistMakerScreen(
     onSearchClick: () -> Unit,
     onSettingsClick: () -> Unit,
-    onPlaylistsClick: () -> Unit
+    onPlaylistsClick: () -> Unit,
+    onFavoritesClick: () -> Unit
 ) {
     val context = LocalContext.current
 
@@ -119,12 +119,7 @@ fun PlaylistMakerScreen(
                 MenuButton(
                     text = stringResource(R.string.favorites),
                     iconResId = R.drawable.ic_favorite_outline,
-                    onClick = {
-                        Toast.makeText(
-                            context,
-                            R.string.favorites_toast,
-                            Toast.LENGTH_SHORT).show()
-                    }
+                    onClick = onFavoritesClick // Заменяем Toast на навигацию
                 )
 
                 MenuButton(
@@ -209,7 +204,8 @@ fun PlaylistHost() {
             PlaylistMakerScreen(
                 onSearchClick = { navController.navigate(Screen.Search.route) },
                 onSettingsClick = { navController.navigate(Screen.Settings.route) },
-                onPlaylistsClick = { navController.navigate(Screen.Playlists.route) }
+                onPlaylistsClick = { navController.navigate(Screen.Playlists.route) },
+                onFavoritesClick = { navController.navigate(Screen.Favorites.route) }
             )
         }
 
@@ -230,6 +226,12 @@ fun PlaylistHost() {
                 onBackClick = { navController.popBackStack() }
             )
         }
+
+        composable(Screen.Favorites.route) {
+            FavoritesScreen(
+                onBackClick = { navController.popBackStack() }
+            )
+        }
     }
 }
 
@@ -240,7 +242,8 @@ fun PlaylistMakerScreenPreview() {
     ProjectTheme {
         PlaylistMakerScreen(
             onSearchClick = {},
-            onSettingsClick = {}
+            onSettingsClick = {},
+            onPlaylistsClick = {}
         ) {}
     }
 }

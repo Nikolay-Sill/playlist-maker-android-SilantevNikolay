@@ -29,7 +29,7 @@ import com.example.project.ui.theme.SurfaceWhite
 import com.example.project.ui.theme.TextPrimary
 
 @Composable
-fun PlaylistsScreen(
+fun FavoritesScreen(
     onBackClick: () -> Unit
 ) {
     Column(
@@ -64,7 +64,7 @@ fun PlaylistsScreen(
                 Spacer(modifier = Modifier.width(12.dp))
 
                 Text(
-                    text = stringResource(R.string.playlists_title),
+                    text = stringResource(R.string.favorites_title),
                     color = TextPrimary,
                     fontSize = 20.sp,
                     fontWeight = FontWeight.Bold
@@ -79,7 +79,7 @@ fun PlaylistsScreen(
             contentAlignment = Alignment.Center
         ) {
             Text(
-                text = stringResource(R.string.playlists_content),
+                text = stringResource(R.string.favorites_empty),
                 color = TextPrimary,
                 fontSize = 16.sp
             )
@@ -89,9 +89,9 @@ fun PlaylistsScreen(
 
 @Preview(showBackground = true, widthDp = 360, heightDp = 800)
 @Composable
-fun PlaylistsScreenPreview() {
+fun FavoritesScreenPreview() {
     ProjectTheme {
-        PlaylistsScreen(
+        FavoritesScreen(
             onBackClick = {}
         )
     }
