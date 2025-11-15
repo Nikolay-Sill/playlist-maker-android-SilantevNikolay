@@ -15,6 +15,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.OutlinedTextField
@@ -34,7 +35,6 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.project.R
 import com.example.project.ui.theme.BackgroundGray
-import com.example.project.ui.theme.DarkGrey
 import com.example.project.ui.theme.PrimaryBlue
 import com.example.project.ui.theme.ProjectTheme
 import com.example.project.ui.theme.SurfaceWhite
@@ -42,6 +42,7 @@ import com.example.project.ui.theme.TextPrimary
 import com.example.project.ui.theme.TextSecondary
 import com.example.project.ui.theme.White
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun CreatePlaylistScreen(
     onBackClick: () -> Unit,
@@ -51,6 +52,7 @@ fun CreatePlaylistScreen(
     val playlistDescription = remember { mutableStateOf("") }
 
     val isButtonEnabled = playlistName.value.isNotBlank()
+    val isNameFieldFocused = remember { mutableStateOf(false) }
 
     Column(
         modifier = Modifier
@@ -122,23 +124,25 @@ fun CreatePlaylistScreen(
                     onValueChange = { playlistName.value = it },
                     modifier = Modifier
                         .fillMaxWidth()
-                        .height(56.dp),
-                    placeholder = {
+                        .height(68.dp),
+                    label = {
                         Text(
                             text = stringResource(R.string.playlist_name_required),
-                            color = TextSecondary,
+                            color = if (isNameFieldFocused.value || playlistName.value.isNotEmpty()) PrimaryBlue else TextSecondary,
                             fontSize = 16.sp
                         )
                     },
                     singleLine = true,
                     colors = OutlinedTextFieldDefaults.colors(
-                        focusedBorderColor = BackgroundGray,
-                        unfocusedBorderColor = BackgroundGray,
+                        focusedBorderColor = PrimaryBlue,
+                        unfocusedBorderColor = if (playlistName.value.isNotEmpty()) PrimaryBlue else BackgroundGray,
                         focusedTextColor = TextPrimary,
                         unfocusedTextColor = TextPrimary,
-                        cursorColor = TextPrimary,
+                        cursorColor = PrimaryBlue,
                         focusedContainerColor = SurfaceWhite,
-                        unfocusedContainerColor = SurfaceWhite
+                        unfocusedContainerColor = SurfaceWhite,
+                        focusedLabelColor = PrimaryBlue,
+                        unfocusedLabelColor = if (playlistName.value.isNotEmpty()) PrimaryBlue else TextSecondary
                     ),
                     shape = RoundedCornerShape(8.dp)
                 )
@@ -150,23 +154,25 @@ fun CreatePlaylistScreen(
                     onValueChange = { playlistDescription.value = it },
                     modifier = Modifier
                         .fillMaxWidth()
-                        .height(56.dp),
-                    placeholder = {
+                        .height(68.dp),
+                    label = {
                         Text(
                             text = stringResource(R.string.playlist_description_hint),
-                            color = TextSecondary,
+                            color = if (playlistDescription.value.isNotEmpty()) PrimaryBlue else TextSecondary,
                             fontSize = 16.sp
                         )
                     },
                     singleLine = true,
                     colors = OutlinedTextFieldDefaults.colors(
-                        focusedBorderColor = BackgroundGray,
-                        unfocusedBorderColor = BackgroundGray,
+                        focusedBorderColor = if (playlistDescription.value.isNotEmpty()) PrimaryBlue else BackgroundGray,
+                        unfocusedBorderColor = if (playlistDescription.value.isNotEmpty()) PrimaryBlue else BackgroundGray,
                         focusedTextColor = TextPrimary,
                         unfocusedTextColor = TextPrimary,
-                        cursorColor = TextPrimary,
+                        cursorColor = PrimaryBlue,
                         focusedContainerColor = SurfaceWhite,
-                        unfocusedContainerColor = SurfaceWhite
+                        unfocusedContainerColor = SurfaceWhite,
+                        focusedLabelColor = PrimaryBlue,
+                        unfocusedLabelColor = if (playlistDescription.value.isNotEmpty()) PrimaryBlue else TextSecondary
                     ),
                     shape = RoundedCornerShape(8.dp)
                 )
@@ -178,7 +184,7 @@ fun CreatePlaylistScreen(
                         .fillMaxWidth()
                         .height(56.dp)
                         .background(
-                            color = if (isButtonEnabled) PrimaryBlue else DarkGrey,
+                            color = if (isButtonEnabled) PrimaryBlue else BackgroundGray,
                             shape = RoundedCornerShape(8.dp)
                         )
                         .clickable {
@@ -190,7 +196,7 @@ fun CreatePlaylistScreen(
                 ) {
                     Text(
                         text = stringResource(R.string.create),
-                        color = SurfaceWhite,
+                        color = if (isButtonEnabled) SurfaceWhite else TextSecondary,
                         fontSize = 16.sp,
                         fontWeight = FontWeight.Medium
                     )
