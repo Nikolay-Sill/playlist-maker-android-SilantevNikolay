@@ -13,6 +13,8 @@
     <string name="nothing_found">Ничего не найдено</string>
     <string name="search_error">Ошибка: %s</string>
     <string name="clear">Очистить</string>
+    <string name="search_songs_placeholder">Поиск</string>
+    <string name="press_search_button">Нажмите кнопку поиска</string>
 
     <string name="settings_title">Настройки</string>
     <string name="dark_theme">Тёмная тема</string>
