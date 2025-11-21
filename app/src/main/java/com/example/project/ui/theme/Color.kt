@@ -17,6 +17,8 @@ val TextPrimary = Color(0xFF1A1B22)
 val TextSecondary = Color(0xFFAEAFB4)
 
 val BackgroundGray = Color(0xFFE6E8EB)
+
+val DarkGrey = Color(0xFFB5B5B5)
 val SurfaceWhite = Color(0xFFFFFFFF)
 
 val ErrorRed = Color(0xFFFF0000)

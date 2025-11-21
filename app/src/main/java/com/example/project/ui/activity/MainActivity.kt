@@ -2,7 +2,6 @@ package com.example.project.ui.activity
 
 import android.R.drawable.ic_menu_search
 import android.os.Bundle
-import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.background
@@ -68,9 +67,10 @@ class MainActivity : ComponentActivity() {
 fun PlaylistMakerScreen(
     onSearchClick: () -> Unit,
     onSettingsClick: () -> Unit,
-    onPlaylistsClick: () -> Unit
+    onPlaylistsClick: () -> Unit,
+    onFavoritesClick: () -> Unit
 ) {
-    val context = LocalContext.current
+    LocalContext.current
 
     Column(
         modifier = Modifier.fillMaxSize()
@@ -119,12 +119,7 @@ fun PlaylistMakerScreen(
                 MenuButton(
                     text = stringResource(R.string.favorites),
                     iconResId = R.drawable.ic_favorite_outline,
-                    onClick = {
-                        Toast.makeText(
-                            context,
-                            R.string.favorites_toast,
-                            Toast.LENGTH_SHORT).show()
-                    }
+                    onClick = onFavoritesClick
                 )
 
                 MenuButton(
@@ -209,13 +204,17 @@ fun PlaylistHost() {
             PlaylistMakerScreen(
                 onSearchClick = { navController.navigate(Screen.Search.route) },
                 onSettingsClick = { navController.navigate(Screen.Settings.route) },
-                onPlaylistsClick = { navController.navigate(Screen.Playlists.route) }
+                onPlaylistsClick = { navController.navigate(Screen.Playlists.route) },
+                onFavoritesClick = { navController.navigate(Screen.Favorites.route) }
             )
         }
 
         composable(Screen.Search.route) {
             SearchScreen(
-                onBackClick = { navController.popBackStack() }
+                onBackClick = { navController.popBackStack() },
+                onTrackClick = { id ->
+                    navController.navigate(Screen.TrackDetails.createRoute(id))
+                }
             )
         }
 
@@ -227,6 +226,32 @@ fun PlaylistHost() {
 
         composable(Screen.Playlists.route) {
             PlaylistsScreen(
+                onBackClick = { navController.popBackStack() },
+                onCreatePlaylistClick = { navController.navigate(Screen.CreatePlaylist.route) }
+            )
+        }
+
+        composable(Screen.Favorites.route) {
+            FavoritesScreen(
+                onBackClick = { navController.popBackStack() }
+            )
+        }
+
+        composable(Screen.CreatePlaylist.route) {
+            CreatePlaylistScreen(
+                onBackClick = { navController.popBackStack() },
+                onSaveClick = { name, description ->
+                    navController.popBackStack()
+                }
+            )
+        }
+
+        composable(
+            route = Screen.TrackDetails.route,
+        ) { backStackEntry ->
+            val id = backStackEntry.arguments?.getString("trackId")?.toLong() ?: 0L
+            TrackDetailsScreen(
+                trackId = id,
                 onBackClick = { navController.popBackStack() }
             )
         }
@@ -240,7 +265,8 @@ fun PlaylistMakerScreenPreview() {
     ProjectTheme {
         PlaylistMakerScreen(
             onSearchClick = {},
-            onSettingsClick = {}
+            onSettingsClick = {},
+            onPlaylistsClick = {}
         ) {}
     }
 }

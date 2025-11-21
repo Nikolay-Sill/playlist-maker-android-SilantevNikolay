@@ -28,8 +28,13 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
 import com.example.project.R
+import com.example.project.creator.Storage
+import com.example.project.data.network.RetrofitNetworkClient
+import com.example.project.data.network.SearchHistoryRepositoryImpl
+import com.example.project.data.network.TracksRepositoryImpl
 import com.example.project.domain.Track
 import com.example.project.domain.TracksRepository
+import com.example.project.domain.Word
 import com.example.project.ui.theme.SurfaceWhite
 import com.example.project.ui.theme.TextPrimary
 import com.example.project.ui.theme.TextSecondary
@@ -43,6 +48,8 @@ import java.io.IOException
 class SearchViewModel(
     private val tracksRepository: TracksRepository
 ) : ViewModel() {
+    private val searchHistoryRepository = SearchHistoryRepositoryImpl(scope = viewModelScope)
+
     private val _searchScreenState = MutableStateFlow<SearchState>(SearchState.Initial)
     val searchScreenState = _searchScreenState.asStateFlow()
 
@@ -50,18 +57,22 @@ class SearchViewModel(
         viewModelScope.launch(Dispatchers.IO) {
             try {
                 _searchScreenState.update { SearchState.Searching }
+
+                searchHistoryRepository.addToHistory(Word(word = whatSearch))
                 val list = tracksRepository.searchTracks(expression = whatSearch)
                 _searchScreenState.update { SearchState.Success(list = list) }
+
             } catch (e: IOException) {
                 _searchScreenState.update { SearchState.Fail(e.message.toString()) }
             }
         }
     }
 
-
     fun clearSearch() {
         _searchScreenState.update { SearchState.Initial }
     }
+
+    suspend fun getHistoryList() = searchHistoryRepository.getHistory()
 
     companion object {
         fun getViewModelFactory(): ViewModelProvider.Factory =
@@ -75,9 +86,12 @@ class SearchViewModel(
 }
 
 @Composable
-fun TrackListItem(track: Track) {
+fun TrackListItem(
+    track: Track,
+    onClick: (Track) -> Unit = {}
+) {
     Card(
-        onClick = {},
+        onClick = { onClick(track) },
         modifier = Modifier
             .fillMaxWidth()
             .padding(horizontal = 16.dp),
@@ -102,7 +116,7 @@ fun TrackListItem(track: Track) {
                 Icon(
                     painter = painterResource(id = R.drawable.ic_music),
                     contentDescription = "Трек ${track.trackName}",
-                    modifier = Modifier.size(100.dp),
+                    modifier = Modifier.size(40.dp),
                     tint = TextPrimary
                 )
 
@@ -116,7 +130,7 @@ fun TrackListItem(track: Track) {
                         text = track.trackName,
                         fontWeight = FontWeight.Normal,
                         fontSize = 16.sp,
-                        color = TextPrimary ,
+                        color = TextPrimary,
                         maxLines = 1
                     )
                     Spacer(modifier = Modifier.height(2.dp))
@@ -142,5 +156,20 @@ fun TrackListItem(track: Track) {
                 tint = TextSecondary
             )
         }
+    }
+}
+
+sealed class SearchState {
+    object Initial : SearchState()
+    object Searching : SearchState()
+    data class Success(val list: List<Track>) : SearchState()
+    data class Fail(val error: String) : SearchState()
+}
+
+object Creator {
+    fun getTracksRepository(): TracksRepository {
+        return TracksRepositoryImpl(
+            RetrofitNetworkClient(Storage())
+        )
     }
 }

@@ -13,6 +13,8 @@
     <string name="nothing_found">Ничего не найдено</string>
     <string name="search_error">Ошибка: %s</string>
     <string name="clear">Очистить</string>
+    <string name="search_songs_placeholder">Поиск</string>
+    <string name="press_search_button">Нажмите кнопку поиска</string>
 
     <string name="settings_title">Настройки</string>
     <string name="dark_theme">Тёмная тема</string>
@@ -20,10 +22,20 @@
     <string name="write_to_developers">Написать разработчикам</string>
     <string name="user_agreement">Пользовательское соглашение</string>
 
-    <string name="playlists_toast">Нажата кнопка \"Плейлисты\"</string>
-    <string name="favorites_toast">Нажата кнопка \"Избранное\"</string>
+    <string name="playlists_content">Здесь будут ваши плейлисты</string>
     <string name="no_email_app">Почтовое приложение не найдено</string>
     <string name="no_browser_app">Браузер не найден</string>
+
+    <string name="playlists_empty">Плейлисты отсутствуют</string>
+    <string name="create_playlist_title">Новый плейлист</string>
+    <string name="playlist_name_required">Название*</string>
+    <string name="playlist_description_hint">Описание</string>
+    <string name="create">Создать</string>
+    <string name="cd_create_playlist">Создать новый плейлист</string>
+    <string name="cd_add_photo">Добавить фото плейлиста</string>
+
+    <string name="favorites_title">Избранное</string>
+    <string name="favorites_empty">Здесь будут ваши избранные треки</string>
 
     <string name="cd_back">Назад</string>
     <string name="cd_search">Поиск</string>
@@ -33,6 +45,12 @@
     <string name="cd_navigate">Перейти</string>
     <string name="cd_share">Поделиться</string>
     <string name="cd_support">Поддержка</string>
+
+    <string name="track_not_found">Трек не найден</string>
+    <string name="add_to_playlist">Добавить в плейлист</string>
+    <string name="add_to_favorites">Добавить в избранное</string>
+    <string name="playlist_title">Добавить в плейлист</string>
+    <string name="duration">Длительность</string>
 
     <string name="share_app_text">Посмотрите это крутое приложение Playlist Maker!</string>
     <string name="developer_email">kolia.silantiew@yandex.ru</string>
