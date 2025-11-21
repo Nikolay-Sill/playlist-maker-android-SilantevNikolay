@@ -20,7 +20,6 @@
       android:strokeLineCap="round"
       android:pathData="M12,12L16,15.5"/>
   
-  <!-- Центральная точка как path вместо circle -->
   <path
       android:fillColor="#AEAFB4"
       android:pathData="M11,11h2v2h-2z"/>

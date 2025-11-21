@@ -70,7 +70,7 @@ fun PlaylistMakerScreen(
     onPlaylistsClick: () -> Unit,
     onFavoritesClick: () -> Unit
 ) {
-    val context = LocalContext.current
+    LocalContext.current
 
     Column(
         modifier = Modifier.fillMaxSize()
@@ -119,7 +119,7 @@ fun PlaylistMakerScreen(
                 MenuButton(
                     text = stringResource(R.string.favorites),
                     iconResId = R.drawable.ic_favorite_outline,
-                    onClick = onFavoritesClick // Заменяем Toast на навигацию
+                    onClick = onFavoritesClick
                 )
 
                 MenuButton(
@@ -211,7 +211,10 @@ fun PlaylistHost() {
 
         composable(Screen.Search.route) {
             SearchScreen(
-                onBackClick = { navController.popBackStack() }
+                onBackClick = { navController.popBackStack() },
+                onTrackClick = { id ->
+                    navController.navigate(Screen.TrackDetails.createRoute(id))
+                }
             )
         }
 
@@ -240,6 +243,16 @@ fun PlaylistHost() {
                 onSaveClick = { name, description ->
                     navController.popBackStack()
                 }
+            )
+        }
+
+        composable(
+            route = Screen.TrackDetails.route,
+        ) { backStackEntry ->
+            val id = backStackEntry.arguments?.getString("trackId")?.toLong() ?: 0L
+            TrackDetailsScreen(
+                trackId = id,
+                onBackClick = { navController.popBackStack() }
             )
         }
     }

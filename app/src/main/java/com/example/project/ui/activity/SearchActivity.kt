@@ -64,7 +64,8 @@ import com.example.project.ui.view_model.TrackListItem
 
 @Composable
 fun SearchScreen(
-    onBackClick: () -> Unit
+    onBackClick: () -> Unit,
+    onTrackClick: (Long) -> Unit
 ) {
     val viewModel: SearchViewModel = viewModel(factory = SearchViewModel.getViewModelFactory())
     val screenState by viewModel.searchScreenState.collectAsState()
@@ -284,7 +285,10 @@ fun SearchScreen(
                                     .fillMaxSize()
                             ) {
                                 items(tracks) { track ->
-                                    TrackListItem(track = track)
+                                    TrackListItem(
+                                        track = track,
+                                        onClick = { onTrackClick(track.id) }
+                                    )
                                     HorizontalDivider(
                                         modifier = Modifier.padding(horizontal = 16.dp),
                                         thickness = 1.dp,
@@ -369,7 +373,8 @@ fun HistoryRequests(
 fun SearchScreenPreview() {
     ProjectTheme {
         SearchScreen(
-            onBackClick = {}
+            onBackClick = {},
+            onTrackClick = {}
         )
     }
 }

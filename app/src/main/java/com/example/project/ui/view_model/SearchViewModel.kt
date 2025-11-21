@@ -168,6 +168,8 @@ sealed class SearchState {
 
 object Creator {
     fun getTracksRepository(): TracksRepository {
-        return TracksRepositoryImpl(RetrofitNetworkClient(Storage()))
+        return TracksRepositoryImpl(
+            RetrofitNetworkClient(Storage())
+        )
     }
 }

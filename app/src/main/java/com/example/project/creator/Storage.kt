@@ -77,4 +77,8 @@ class Storage {
         }
         return result
     }
+
+    fun getTrackById(id: Long): TrackDto? {
+        return listTracks.firstOrNull { it.id == id }
+    }
 }
