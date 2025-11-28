@@ -2,6 +2,7 @@ package com.example.project.ui.activity
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -20,6 +21,8 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Clear
 import androidx.compose.material.icons.filled.Search
+import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
@@ -40,18 +43,22 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.focus.onFocusChanged
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.SpanStyle
+import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.project.R
-import com.example.project.ui.theme.BackgroundGray
-import androidx.compose.ui.graphics.Color
+import com.example.project.domain.Track
 import com.example.project.domain.Word
+import com.example.project.ui.theme.BackgroundGray
 import com.example.project.ui.theme.ErrorRed
 import com.example.project.ui.theme.ProjectTheme
 import com.example.project.ui.theme.SurfaceWhite
@@ -59,23 +66,23 @@ import com.example.project.ui.theme.TextPrimary
 import com.example.project.ui.theme.TextSecondary
 import com.example.project.ui.view_model.SearchState
 import com.example.project.ui.view_model.SearchViewModel
-import com.example.project.ui.view_model.TrackListItem
-
 
 @Composable
 fun SearchScreen(
     onBackClick: () -> Unit,
-    onTrackClick: (Long) -> Unit
+    onTrackClick: (Track) -> Unit
 ) {
-    val viewModel: SearchViewModel = viewModel(factory = SearchViewModel.getViewModelFactory())
+    val viewModel: SearchViewModel =
+        viewModel(factory = SearchViewModel.getViewModelFactory())
+
     val screenState by viewModel.searchScreenState.collectAsState()
 
     var historyList by remember { mutableStateOf<List<Word>>(emptyList()) }
     var text by remember { mutableStateOf("") }
     var isFocused by remember { mutableStateOf(false) }
+
     val focusRequester = remember { FocusRequester() }
     val focusManager = LocalFocusManager.current
-
 
     LaunchedEffect(screenState) {
         when (screenState) {
@@ -101,8 +108,7 @@ fun SearchScreen(
         Box(
             modifier = Modifier
                 .fillMaxWidth()
-                .height(56.dp)
-                .background(SurfaceWhite),
+                .height(56.dp),
             contentAlignment = Alignment.CenterStart
         ) {
             Row(
@@ -146,9 +152,7 @@ fun SearchScreen(
             ) {
                 OutlinedTextField(
                     value = text,
-                    onValueChange = { newText ->
-                        text = newText
-                    },
+                    onValueChange = { newText -> text = newText },
                     modifier = Modifier
                         .fillMaxWidth()
                         .height(49.dp)
@@ -174,7 +178,7 @@ fun SearchScreen(
                         ) {
                             Icon(
                                 imageVector = Icons.Default.Search,
-                                contentDescription = stringResource(R.string.search_title),
+                                contentDescription = null,
                                 tint = TextSecondary
                             )
                         }
@@ -190,7 +194,7 @@ fun SearchScreen(
                             ) {
                                 Icon(
                                     imageVector = Icons.Default.Clear,
-                                    contentDescription = stringResource(R.string.cd_clear),
+                                    contentDescription = null,
                                     tint = TextSecondary
                                 )
                             }
@@ -223,98 +227,150 @@ fun SearchScreen(
             Spacer(modifier = Modifier.height(8.dp))
         }
 
-        when {
-            else -> {
-                when (screenState) {
-                    is SearchState.Initial -> {
-                        if (text.isEmpty()) {
-                            Box(
-                                modifier = Modifier
-                                    .fillMaxSize()
-                                    .padding(16.dp),
-                                contentAlignment = Alignment.Center
-                            ) {
-                                Text(
-                                    text = stringResource(R.string.enter_search_query),
-                                    color = TextSecondary
-                                )
-                            }
-                        } else {
-                            Box(
-                                modifier = Modifier
-                                    .fillMaxSize()
-                                    .padding(16.dp),
-                                contentAlignment = Alignment.Center
-                            ) {
-                                Text(
-                                    text = stringResource(R.string.press_search_button),
-                                    color = TextSecondary
-                                )
-                            }
-                        }
-                    }
+        // CONTENT
+        when (screenState) {
 
-                    is SearchState.Searching -> {
-                        Box(
-                            modifier = Modifier
-                                .fillMaxSize()
-                                .padding(16.dp),
-                            contentAlignment = Alignment.Center
-                        ) {
-                            CircularProgressIndicator()
-                        }
-                    }
+            is SearchState.Initial -> {
+                Box(
+                    modifier = Modifier.fillMaxSize(),
+                    contentAlignment = Alignment.Center
+                ) {
+                    Text(
+                        text = if (text.isEmpty())
+                            stringResource(R.string.enter_search_query)
+                        else
+                            stringResource(R.string.press_search_button),
+                        color = TextSecondary
+                    )
+                }
+            }
 
-                    is SearchState.Success -> {
-                        val tracks = (screenState as SearchState.Success).list
-                        if (tracks.isEmpty()) {
-                            Box(
-                                modifier = Modifier
-                                    .fillMaxSize()
-                                    .padding(16.dp),
-                                contentAlignment = Alignment.Center
-                            ) {
-                                Text(
-                                    text = stringResource(R.string.nothing_found),
-                                    color = TextSecondary
-                                )
-                            }
-                        } else {
-                            LazyColumn(
-                                modifier = Modifier
-                                    .fillMaxSize()
-                            ) {
-                                items(tracks) { track ->
-                                    TrackListItem(
-                                        track = track,
-                                        onClick = { onTrackClick(track.id) }
-                                    )
-                                    HorizontalDivider(
-                                        modifier = Modifier.padding(horizontal = 16.dp),
-                                        thickness = 1.dp,
-                                        color = BackgroundGray
-                                    )
+            is SearchState.Searching -> {
+                Box(
+                    modifier = Modifier.fillMaxSize(),
+                    contentAlignment = Alignment.Center
+                ) {
+                    CircularProgressIndicator()
+                }
+            }
+
+            is SearchState.Success -> {
+                val tracks = (screenState as SearchState.Success).list
+
+                if (tracks.isEmpty()) {
+                    Box(
+                        modifier = Modifier.fillMaxSize(),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        Text(
+                            text = stringResource(R.string.nothing_found),
+                            color = TextSecondary
+                        )
+                    }
+                } else {
+                    LazyColumn(
+                        modifier = Modifier.fillMaxSize()
+                    ) {
+                        items(tracks) { track ->
+                            TrackListItem(
+                                track = track,
+                                onClick = { selectedTrack ->
+                                    onTrackClick(selectedTrack)
                                 }
-                            }
-                        }
-                    }
-
-                    is SearchState.Fail -> {
-                        val error = (screenState as SearchState.Fail).error
-                        Box(
-                            modifier = Modifier
-                                .fillMaxSize()
-                                .padding(16.dp),
-                            contentAlignment = Alignment.Center
-                        ) {
-                            Text(
-                                text = stringResource(R.string.search_error, error),
-                                color = ErrorRed
+                            )
+                            HorizontalDivider(
+                                modifier = Modifier.padding(horizontal = 16.dp),
+                                thickness = 1.dp,
+                                color = BackgroundGray
                             )
                         }
                     }
                 }
             }
+
+            is SearchState.Fail -> {
+                val error = (screenState as SearchState.Fail).error
+                Box(
+                    modifier = Modifier.fillMaxSize(),
+                    contentAlignment = Alignment.Center
+                ) {
+                    Text(
+                        text = stringResource(R.string.search_error, error),
+                        color = ErrorRed
+                    )
+                }
+            }
+        }
+    }
+}
+
+@Composable
+fun TrackListItem(
+    track: Track,
+    onClick: (Track) -> Unit
+) {
+    Card(
+        onClick = { onClick(track) },
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(horizontal = 16.dp),
+        colors = CardDefaults.cardColors(
+            containerColor = SurfaceWhite
+        ),
+        elevation = CardDefaults.cardElevation(0.dp)
+    ) {
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(vertical = 12.dp, horizontal = 16.dp),
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.SpaceBetween
+        ) {
+            Row(
+                modifier = Modifier.weight(1f),
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Icon(
+                    painter = painterResource(id = R.drawable.ic_music),
+                    contentDescription = null,
+                    modifier = Modifier.size(40.dp),
+                    tint = TextPrimary
+                )
+
+                Spacer(modifier = Modifier.width(12.dp))
+
+                Column(
+                    modifier = Modifier.weight(1f)
+                ) {
+                    Text(
+                        text = track.trackName,
+                        fontWeight = FontWeight.Normal,
+                        fontSize = 16.sp,
+                        color = TextPrimary,
+                        maxLines = 1
+                    )
+                    Spacer(modifier = Modifier.height(2.dp))
+                    Text(
+                        text = buildAnnotatedString {
+                            append(track.artistName)
+                            append(" • ")
+                            withStyle(style = SpanStyle(fontWeight = FontWeight.Bold)) {
+                                append(track.trackTime)
+                            }
+                        },
+                        fontSize = 14.sp,
+                        color = TextSecondary,
+                        maxLines = 1
+                    )
+                }
+            }
+
+            Icon(
+                painter = painterResource(id = R.drawable.ic_arrow_right),
+                contentDescription = null,
+                modifier = Modifier.size(24.dp),
+                tint = TextSecondary
+            )
         }
     }
 }
@@ -325,8 +381,7 @@ fun HistoryRequests(
     onClick: (String) -> Unit
 ) {
     Column(
-        modifier = Modifier
-            .fillMaxWidth()
+        modifier = Modifier.fillMaxWidth()
     ) {
         HorizontalDivider(
             modifier = Modifier
@@ -366,7 +421,6 @@ fun HistoryRequests(
         }
     }
 }
-
 
 @Preview(showBackground = true, widthDp = 360, heightDp = 800)
 @Composable

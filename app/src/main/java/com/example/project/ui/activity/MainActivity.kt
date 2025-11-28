@@ -1,6 +1,5 @@
 package com.example.project.ui.activity
 
-import android.R.drawable.ic_menu_search
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -36,16 +35,20 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.example.project.R
+import com.example.project.domain.Track
 import com.example.project.ui.navigation.Screen
 import com.example.project.ui.theme.PrimaryBlue
 import com.example.project.ui.theme.ProjectTheme
 import com.example.project.ui.theme.TextPrimary
 import com.example.project.ui.theme.TextSecondary
 import com.example.project.ui.theme.White
+import com.example.project.ui.view_model.TrackDetailsViewModel
+import com.example.project.ui.view_model.TrackDetailsViewModelFactory
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -106,7 +109,7 @@ fun PlaylistMakerScreen(
             ) {
                 MenuButton(
                     text = stringResource(R.string.search),
-                    iconResId = ic_menu_search,
+                    iconResId = android.R.drawable.ic_menu_search,
                     onClick = onSearchClick
                 )
 
@@ -145,13 +148,8 @@ fun MenuButton(
             .fillMaxWidth()
             .height(66.dp),
         shape = RoundedCornerShape(0.dp),
-        colors = CardDefaults.cardColors(
-            containerColor = White
-        ),
-        elevation = CardDefaults.cardElevation(
-            defaultElevation = 0.dp
-        ),
-        border = null
+        colors = CardDefaults.cardColors(containerColor = White),
+        elevation = CardDefaults.cardElevation(defaultElevation = 0.dp)
     ) {
         Row(
             modifier = Modifier
@@ -160,9 +158,7 @@ fun MenuButton(
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.SpaceBetween
         ) {
-            Row(
-                verticalAlignment = Alignment.CenterVertically
-            ) {
+            Row(verticalAlignment = Alignment.CenterVertically) {
                 Icon(
                     painter = painterResource(id = iconResId),
                     contentDescription = null,
@@ -174,7 +170,7 @@ fun MenuButton(
 
                 Text(
                     text = text,
-                    color = TextPrimary ,
+                    color = TextPrimary,
                     fontSize = 16.sp,
                     fontWeight = FontWeight.Medium,
                     textAlign = TextAlign.Start
@@ -183,14 +179,13 @@ fun MenuButton(
 
             Icon(
                 painter = painterResource(id = R.drawable.ic_arrow_right),
-                contentDescription = stringResource(R.string.cd_arrow),
+                contentDescription = null,
                 modifier = Modifier.size(24.dp),
                 tint = TextSecondary
             )
         }
     }
 }
-
 
 @Composable
 fun PlaylistHost() {
@@ -212,8 +207,12 @@ fun PlaylistHost() {
         composable(Screen.Search.route) {
             SearchScreen(
                 onBackClick = { navController.popBackStack() },
-                onTrackClick = { id ->
-                    navController.navigate(Screen.TrackDetails.createRoute(id))
+                onTrackClick = { track ->
+                    navController.currentBackStackEntry
+                        ?.savedStateHandle
+                        ?.set("track", track)
+
+                    navController.navigate(Screen.TrackDetails.route)
                 }
             )
         }
@@ -240,24 +239,34 @@ fun PlaylistHost() {
         composable(Screen.CreatePlaylist.route) {
             CreatePlaylistScreen(
                 onBackClick = { navController.popBackStack() },
-                onSaveClick = { name, description ->
-                    navController.popBackStack()
-                }
+                onSaveClick = { _, _ -> navController.popBackStack() }
             )
         }
 
-        composable(
-            route = Screen.TrackDetails.route,
-        ) { backStackEntry ->
-            val id = backStackEntry.arguments?.getString("trackId")?.toLong() ?: 0L
+        composable(Screen.TrackDetails.route) {
+            val track =
+                navController.previousBackStackEntry
+                    ?.savedStateHandle
+                    ?.get<Track>("track")
+
+            if (track == null) {
+                TrackDetailsScreenError(
+                    onBackClick = { navController.popBackStack() }
+                )
+                return@composable
+            }
+
+            val viewModel: TrackDetailsViewModel = viewModel(
+                factory = TrackDetailsViewModelFactory(track)
+            )
+
             TrackDetailsScreen(
-                trackId = id,
+                viewModel = viewModel,
                 onBackClick = { navController.popBackStack() }
             )
         }
     }
 }
-
 
 @Preview(showBackground = true, widthDp = 360, heightDp = 800)
 @Composable
@@ -266,7 +275,8 @@ fun PlaylistMakerScreenPreview() {
         PlaylistMakerScreen(
             onSearchClick = {},
             onSettingsClick = {},
-            onPlaylistsClick = {}
-        ) {}
+            onPlaylistsClick = {},
+            onFavoritesClick = {}
+        )
     }
 }
