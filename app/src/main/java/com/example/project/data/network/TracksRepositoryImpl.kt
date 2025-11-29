@@ -28,7 +28,8 @@ class TracksRepositoryImpl(
                     trackTime = SimpleDateFormat(
                         "mm:ss",
                         Locale.getDefault()
-                    ).format(it.trackTimeMillis)
+                    ).format(it.trackTimeMillis),
+                    image = it.artworkUrl100?.replace("100x100bb", "512x512bb")
                 )
             }
         } else {

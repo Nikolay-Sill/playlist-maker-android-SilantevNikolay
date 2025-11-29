@@ -6,5 +6,5 @@ data class TrackDto(
     val artistName: String,
     val trackTimeMillis: Long,
     val previewUrl: String?,
-    val image: String?
+    val artworkUrl100: String?
 )

@@ -6,19 +6,10 @@
     android:viewportHeight="24"
     android:tint="#000000">
 
-    <!-- Основная форма (как у ic_playlists) -->
     <path
         android:fillColor="@android:color/white"
-        android:pathData="M20,2H8C6.9,2 6,2.9 6,4V16C6,17.1 6.9,18 8,18H20C21.1,18 22,17.1 22,16V4C22,2.9 21.1,2 20,2z" />
-
-    <!-- Нижняя прямоугольная панель -->
-    <path
-        android:fillColor="@android:color/white"
-        android:pathData="M4,6H2V20C2,21.1 2.9,22 4,22H18V20H4V6z" />
-
-    <!-- Плюс по центру -->
-    <path
-        android:fillColor="@android:color/white"
-        android:pathData="M12,8V12H8V14H12V18H14V14H18V12H14V8H12Z" />
-
+        android:pathData="
+            M20,2H8C6.9,2 6,2.9 6,4V16C6,17.1 6.9,18 8,18H20C21.1,18 22,17.1 22,16V4C22,2.9 21.1,2 20,2z
+            M13,6H11V10H7V12H11V16H13V12H17V10H13z
+            M4,6H2V20C2,21.1 2.9,22 4,22H18V20H4V6z" />
 </vector>

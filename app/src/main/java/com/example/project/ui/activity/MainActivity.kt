@@ -48,7 +48,6 @@ import com.example.project.ui.theme.TextPrimary
 import com.example.project.ui.theme.TextSecondary
 import com.example.project.ui.theme.White
 import com.example.project.ui.view_model.TrackDetailsViewModel
-import com.example.project.ui.view_model.TrackDetailsViewModelFactory
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -257,7 +256,7 @@ fun PlaylistHost() {
             }
 
             val viewModel: TrackDetailsViewModel = viewModel(
-                factory = TrackDetailsViewModelFactory(track)
+                factory = TrackDetailsViewModel.getViewModelFactory(track)
             )
 
             TrackDetailsScreen(

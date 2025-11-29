@@ -174,7 +174,7 @@ private fun TrackDetailsScreenContent(
                             painter = painterResource(id = R.drawable.ic_add_playlist),
                             contentDescription = stringResource(R.string.add_to_playlist),
                             tint = Color.White,
-                            modifier = Modifier.size(24.dp)
+                            modifier = Modifier.size(28.dp)
                         )
                     }
                 }
@@ -194,7 +194,7 @@ private fun TrackDetailsScreenContent(
                             painter = painterResource(id = R.drawable.ic_favorite_outline),
                             contentDescription = stringResource(R.string.add_to_favorites),
                             tint = Color.White,
-                            modifier = Modifier.size(24.dp)
+                            modifier = Modifier.size(32.dp)
                         )
                     }
                 }

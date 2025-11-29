@@ -16,14 +16,14 @@ class TrackDetailsViewModel(
 
     private val _state = MutableStateFlow<State>(State.Content(track))
     val state: StateFlow<State> = _state
-}
 
-class TrackDetailsViewModelFactory(
-    private val track: Track
-) : ViewModelProvider.Factory {
-
-    @Suppress("UNCHECKED_CAST")
-    override fun <T : ViewModel> create(modelClass: Class<T>): T {
-        return TrackDetailsViewModel(track) as T
+    companion object {
+        fun getViewModelFactory(track: Track): ViewModelProvider.Factory =
+            object : ViewModelProvider.Factory {
+                @Suppress("UNCHECKED_CAST")
+                override fun <T : ViewModel> create(modelClass: Class<T>): T {
+                    return TrackDetailsViewModel(track) as T
+                }
+            }
     }
 }
