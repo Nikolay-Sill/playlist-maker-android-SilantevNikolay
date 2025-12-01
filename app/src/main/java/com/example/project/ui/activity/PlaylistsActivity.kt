@@ -2,7 +2,6 @@ package com.example.project.ui.activity
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -40,15 +39,16 @@ import com.example.project.ui.theme.DarkGrey
 import com.example.project.ui.theme.SurfaceWhite
 import com.example.project.ui.theme.TextPrimary
 import com.example.project.ui.theme.TextSecondary
-import com.example.project.ui.view_model.PlaylistViewModel
+import com.example.project.ui.view_model.PlaylistsViewModel
 
 @Composable
 fun PlaylistsScreen(
     onBackClick: () -> Unit,
     onCreatePlaylistClick: () -> Unit,
-    playlistViewModel: PlaylistViewModel
+    navigateToPlaylist: (Int) -> Unit,
+    playlistsViewModel: PlaylistsViewModel
 ) {
-    val playlists by playlistViewModel.playlists.collectAsState(initial = emptyList())
+    val playlists by playlistsViewModel.playlists.collectAsState(initial = emptyList())
 
     Box(
         modifier = Modifier
@@ -101,10 +101,11 @@ fun PlaylistsScreen(
             } else {
                 LazyColumn(
                     modifier = Modifier.fillMaxSize(),
-                    verticalArrangement = Arrangement.spacedBy(12.dp)
                 ) {
                     items(playlists) { playlist ->
-                        PlaylistListItem(playlist)
+                        PlaylistListItem(playlist) {
+                            navigateToPlaylist(playlist.id.toInt())
+                        }
                     }
                 }
             }
@@ -129,12 +130,12 @@ fun PlaylistsScreen(
 }
 
 @Composable
-fun PlaylistListItem(playlist: Playlist) {
+fun PlaylistListItem(playlist: Playlist, onClick: () -> Unit) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
-            .clickable { }
-            .padding(vertical = 4.dp),
+            .clickable { onClick() }
+            .padding(start = 20.dp, top = 6.dp, bottom = 6.dp),
         verticalAlignment = Alignment.CenterVertically
     ) {
         Icon(

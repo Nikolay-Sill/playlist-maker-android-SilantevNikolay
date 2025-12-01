@@ -8,7 +8,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 
-class PlaylistViewModel : ViewModel() {
+class PlaylistsViewModel : ViewModel() {
 
     private val database = DatabaseMock(scope = viewModelScope)
 
