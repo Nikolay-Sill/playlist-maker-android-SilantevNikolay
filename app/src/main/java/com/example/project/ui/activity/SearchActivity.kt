@@ -1,56 +1,35 @@
 package com.example.project.ui.activity
 
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.heightIn
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Clear
 import androidx.compose.material.icons.filled.Search
-import androidx.compose.material3.Card
-import androidx.compose.material3.CardDefaults
-import androidx.compose.material3.CircularProgressIndicator
-import androidx.compose.material3.HorizontalDivider
-import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
-import androidx.compose.material3.OutlinedTextField
-import androidx.compose.material3.OutlinedTextFieldDefaults
-import androidx.compose.material3.Text
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
+import androidx.compose.material3.*
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.focus.onFocusChanged
-import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.SpanStyle
+import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -60,14 +39,10 @@ import coil.compose.AsyncImage
 import com.example.project.R
 import com.example.project.domain.Track
 import com.example.project.domain.Word
-import com.example.project.ui.theme.BackgroundGray
-import com.example.project.ui.theme.ErrorRed
-import com.example.project.ui.theme.ProjectTheme
-import com.example.project.ui.theme.SurfaceWhite
-import com.example.project.ui.theme.TextPrimary
-import com.example.project.ui.theme.TextSecondary
+import com.example.project.ui.theme.*
 import com.example.project.ui.view_model.SearchState
 import com.example.project.ui.view_model.SearchViewModel
+import kotlinx.coroutines.launch
 
 @Composable
 fun SearchScreen(
@@ -76,6 +51,7 @@ fun SearchScreen(
 ) {
     val viewModel: SearchViewModel =
         viewModel(factory = SearchViewModel.getViewModelFactory())
+    val coroutineScope = rememberCoroutineScope()
 
     val screenState by viewModel.searchScreenState.collectAsState()
 
@@ -87,17 +63,8 @@ fun SearchScreen(
     val focusManager = LocalFocusManager.current
 
     LaunchedEffect(screenState) {
-        when (screenState) {
-            is SearchState.Success -> {
-                focusManager.clearFocus()
-                historyList = viewModel.getHistoryList()
-            }
-            else -> Unit
-        }
-    }
-
-    LaunchedEffect(isFocused) {
-        if (isFocused && text.isEmpty()) {
+        if (screenState is SearchState.Success) {
+            focusManager.clearFocus()
             historyList = viewModel.getHistoryList()
         }
     }
@@ -107,6 +74,7 @@ fun SearchScreen(
             .fillMaxSize()
             .background(SurfaceWhite)
     ) {
+
         Box(
             modifier = Modifier
                 .fillMaxWidth()
@@ -146,37 +114,33 @@ fun SearchScreen(
                 .fillMaxWidth()
                 .padding(horizontal = 16.dp)
         ) {
+
             Column(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .clip(RoundedCornerShape(6.dp))
+                    .clip(RoundedCornerShape(10.dp))
                     .background(BackgroundGray)
             ) {
-                OutlinedTextField(
+
+                SearchBasicField(
                     value = text,
                     onValueChange = { newText -> text = newText },
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .height(49.dp)
-                        .focusRequester(focusRequester)
-                        .onFocusChanged { focusState ->
-                            isFocused = focusState.isFocused
-                        },
-                    placeholder = {
-                        Text(
-                            text = stringResource(R.string.search_songs_placeholder),
-                            color = TextSecondary,
-                            fontSize = 14.sp
-                        )
+                    placeholderText = stringResource(R.string.search_songs_placeholder),
+                    focusRequester = focusRequester,
+                    onFocusChanged = { focused ->
+                        isFocused = focused
+                        if (focused && text.isEmpty()) {
+                            coroutineScope.launch {
+                                historyList = viewModel.getHistoryList()
+                            }
+                        }
                     },
                     leadingIcon = {
                         IconButton(
                             onClick = {
-                                if (text.isNotEmpty()) {
-                                    viewModel.search(text)
-                                }
+                                if (text.isNotEmpty()) viewModel.search(text)
                             },
-                            modifier = Modifier.size(18.dp)
+                            modifier = Modifier.size(24.dp)
                         ) {
                             Icon(
                                 imageVector = Icons.Default.Search,
@@ -185,14 +149,14 @@ fun SearchScreen(
                             )
                         }
                     },
-                    trailingIcon = {
-                        if (text.isNotEmpty()) {
+                    trailingIcon = if (text.isNotEmpty()) {
+                        {
                             IconButton(
                                 onClick = {
                                     text = ""
                                     viewModel.clearSearch()
                                 },
-                                modifier = Modifier.size(18.dp)
+                                modifier = Modifier.size(24.dp)
                             ) {
                                 Icon(
                                     imageVector = Icons.Default.Clear,
@@ -201,18 +165,7 @@ fun SearchScreen(
                                 )
                             }
                         }
-                    },
-                    singleLine = true,
-                    colors = OutlinedTextFieldDefaults.colors(
-                        focusedBorderColor = Color.Transparent,
-                        unfocusedBorderColor = Color.Transparent,
-                        focusedTextColor = TextPrimary,
-                        unfocusedTextColor = TextPrimary,
-                        cursorColor = TextPrimary,
-                        focusedContainerColor = Color.Transparent,
-                        unfocusedContainerColor = Color.Transparent
-                    ),
-                    shape = RoundedCornerShape(6.dp)
+                    } else null
                 )
 
                 if (isFocused && text.isEmpty() && historyList.isNotEmpty()) {
@@ -229,7 +182,6 @@ fun SearchScreen(
             Spacer(modifier = Modifier.height(8.dp))
         }
 
-        // CONTENT
         when (screenState) {
 
             is SearchState.Initial -> {
@@ -260,15 +212,7 @@ fun SearchScreen(
                 val tracks = (screenState as SearchState.Success).list
 
                 if (tracks.isEmpty()) {
-                    Box(
-                        modifier = Modifier.fillMaxSize(),
-                        contentAlignment = Alignment.Center
-                    ) {
-                        Text(
-                            text = stringResource(R.string.nothing_found),
-                            color = TextSecondary
-                        )
-                    }
+                    PlaceholderNoResults()
                 } else {
                     LazyColumn(
                         modifier = Modifier.fillMaxSize()
@@ -291,16 +235,85 @@ fun SearchScreen(
             }
 
             is SearchState.Fail -> {
-                val error = (screenState as SearchState.Fail).error
-                Box(
-                    modifier = Modifier.fillMaxSize(),
-                    contentAlignment = Alignment.Center
-                ) {
-                    Text(
-                        text = stringResource(R.string.search_error, error),
-                        color = ErrorRed
-                    )
-                }
+                PlaceholderError(
+                    onRetry = {
+                        if (text.isNotEmpty()) {
+                            viewModel.search(text)
+                        }
+                    }
+                )
+            }
+        }
+    }
+}
+
+@Composable
+fun SearchBasicField(
+    value: String,
+    onValueChange: (String) -> Unit,
+    placeholderText: String,
+    focusRequester: FocusRequester,
+    onFocusChanged: (Boolean) -> Unit,
+    modifier: Modifier = Modifier,
+    leadingIcon: @Composable (() -> Unit)? = null,
+    trailingIcon: @Composable (() -> Unit)? = null,
+    textFontSize: Int = 18,
+) {
+    val shape = RoundedCornerShape(6.dp)
+
+    Box(
+        modifier = modifier
+            .height(49.dp)
+            .clip(shape)
+            .background(BackgroundGray)
+            .padding(horizontal = 8.dp),
+        contentAlignment = Alignment.CenterStart
+    ) {
+
+        Row(
+            modifier = Modifier.fillMaxSize(),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+
+            if (leadingIcon != null) {
+                leadingIcon()
+                Spacer(modifier = Modifier.width(8.dp))
+            }
+
+            Box(modifier = Modifier.weight(1f)) {
+
+                BasicTextField(
+                    value = value,
+                    onValueChange = onValueChange,
+                    singleLine = true,
+                    textStyle = TextStyle(
+                        fontSize = textFontSize.sp,
+                        color = TextPrimary,
+                        lineHeight = textFontSize.sp
+                    ),
+                    cursorBrush = SolidColor(PrimaryBlue),
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .focusRequester(focusRequester)
+                        .onFocusChanged { state ->
+                            onFocusChanged(state.isFocused)
+                        },
+                    decorationBox = { inner ->
+                        if (value.isEmpty()) {
+                            Text(
+                                text = placeholderText,
+                                fontSize = 16.sp,
+                                color = TextSecondary
+                            )
+                        }
+                        inner()
+                    }
+                )
+            }
+
+            if (trailingIcon != null) {
+                Spacer(modifier = Modifier.width(8.dp))
+                trailingIcon()
             }
         }
     }
@@ -350,7 +363,6 @@ fun TrackListItem(
                 ) {
                     Text(
                         text = track.trackName,
-                        fontWeight = FontWeight.Normal,
                         fontSize = 16.sp,
                         color = TextPrimary,
                         maxLines = 1
@@ -424,6 +436,77 @@ fun HistoryRequests(
                     )
                 }
             }
+        }
+    }
+}
+
+@Composable
+fun PlaceholderNoResults() {
+    Column(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(top = 60.dp),
+        horizontalAlignment = Alignment.CenterHorizontally,
+    ) {
+        Image(
+            painter = painterResource(R.drawable.no_tracks),
+            contentDescription = null,
+            modifier = Modifier.size(120.dp)
+        )
+        Spacer(modifier = Modifier.height(12.dp))
+        Text(
+            text = stringResource(R.string.nothing_found),
+            color = TextPrimary,
+            fontSize = 16.sp
+        )
+    }
+}
+
+@Composable
+fun PlaceholderError(onRetry: () -> Unit) {
+    Column(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(top = 60.dp),
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+        Image(
+            painter = painterResource(R.drawable.without_internet),
+            contentDescription = null,
+            modifier = Modifier.size(120.dp)
+        )
+        Spacer(modifier = Modifier.height(12.dp))
+        Text(
+            text = stringResource(R.string.placeholder_error),
+            color = TextPrimary,
+            fontSize = 16.sp
+        )
+
+        Spacer(modifier = Modifier.height(16.dp))
+
+        Text(
+            text = stringResource(R.string.check_the_connection),
+            color = TextPrimary,
+            fontSize = 16.sp,
+            textAlign = TextAlign.Center,
+            modifier = Modifier.padding(horizontal = 32.dp)
+        )
+
+        Spacer(modifier = Modifier.height(20.dp))
+
+        Box(
+            modifier = Modifier
+                .clip(RoundedCornerShape(8.dp))
+                .background(PrimaryBlue)
+                .clickable { onRetry() }
+                .padding(horizontal = 28.dp, vertical = 10.dp)
+        ) {
+            Text(
+                text = stringResource(R.string.retry),
+                color = White,
+                fontSize = 16.sp,
+                fontWeight = FontWeight.Medium
+            )
         }
     }
 }

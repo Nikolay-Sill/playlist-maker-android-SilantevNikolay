@@ -5,6 +5,7 @@ import com.example.project.data.dto.TracksSearchResponse
 import com.example.project.domain.NetworkClient
 import com.example.project.domain.Track
 import com.example.project.domain.TracksRepository
+import java.io.IOException
 import java.text.SimpleDateFormat
 import java.util.Locale
 
@@ -19,21 +20,21 @@ class TracksRepositoryImpl(
     override suspend fun searchTracks(expression: String): List<Track> {
         val response = networkClient.doRequest(TracksSearchRequest(expression))
 
-        return if (response.resultCode == 200) {
-            (response as TracksSearchResponse).results.map {
+        return when (response.resultCode) {
+
+            200 -> (response as TracksSearchResponse).results.map {
                 Track(
                     id = it.id,
                     trackName = it.trackName,
                     artistName = it.artistName,
-                    trackTime = SimpleDateFormat(
-                        "mm:ss",
-                        Locale.getDefault()
-                    ).format(it.trackTimeMillis),
+                    trackTime = SimpleDateFormat("mm:ss", Locale.getDefault())
+                        .format(it.trackTimeMillis),
                     image = it.artworkUrl100?.replace("100x100bb", "512x512bb")
                 )
             }
-        } else {
-            emptyList()
+
+            -1 -> throw IOException("network_error")
+            else -> throw IOException("server_error")
         }
     }
 

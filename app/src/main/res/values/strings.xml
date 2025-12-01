@@ -10,8 +10,11 @@
     <string name="search_hint">Поиск</string>
     <string name="back">Назад</string>
     <string name="enter_search_query">Введите строку для поиска</string>
-    <string name="nothing_found">Ничего не найдено</string>
+    <string name="nothing_found">Ничего не нашлось</string>
     <string name="search_error">Ошибка: %s</string>
+    <string name="placeholder_error">Проблемы со связью</string>
+    <string name="check_the_connection">Загрузка не удалась. Проверьте подключение к интернету</string>
+    <string name="retry">Обновить</string>
     <string name="clear">Очистить</string>
     <string name="search_songs_placeholder">Поиск</string>
     <string name="press_search_button">Нажмите кнопку поиска</string>
