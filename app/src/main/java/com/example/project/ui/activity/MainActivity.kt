@@ -35,19 +35,13 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.lifecycle.viewmodel.compose.viewModel
-import androidx.navigation.compose.NavHost
-import androidx.navigation.compose.composable
-import androidx.navigation.compose.rememberNavController
 import com.example.project.R
-import com.example.project.domain.Track
-import com.example.project.ui.navigation.Screen
+import com.example.project.ui.navigation.PlaylistHost
 import com.example.project.ui.theme.PrimaryBlue
 import com.example.project.ui.theme.ProjectTheme
 import com.example.project.ui.theme.TextPrimary
 import com.example.project.ui.theme.TextSecondary
 import com.example.project.ui.theme.White
-import com.example.project.ui.view_model.TrackDetailsViewModel
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -181,87 +175,6 @@ fun MenuButton(
                 contentDescription = null,
                 modifier = Modifier.size(24.dp),
                 tint = TextSecondary
-            )
-        }
-    }
-}
-
-@Composable
-fun PlaylistHost() {
-    val navController = rememberNavController()
-
-    NavHost(
-        navController = navController,
-        startDestination = Screen.Main.route
-    ) {
-        composable(Screen.Main.route) {
-            PlaylistMakerScreen(
-                onSearchClick = { navController.navigate(Screen.Search.route) },
-                onSettingsClick = { navController.navigate(Screen.Settings.route) },
-                onPlaylistsClick = { navController.navigate(Screen.Playlists.route) },
-                onFavoritesClick = { navController.navigate(Screen.Favorites.route) }
-            )
-        }
-
-        composable(Screen.Search.route) {
-            SearchScreen(
-                onBackClick = { navController.popBackStack() },
-                onTrackClick = { track ->
-                    navController.currentBackStackEntry
-                        ?.savedStateHandle
-                        ?.set("track", track)
-
-                    navController.navigate(Screen.TrackDetails.route)
-                }
-            )
-        }
-
-        composable(Screen.Settings.route) {
-            SettingsScreen(
-                onBackClick = { navController.popBackStack() }
-            )
-        }
-
-        composable(Screen.Playlists.route) {
-            PlaylistsScreen(
-                onBackClick = { navController.popBackStack() },
-                onCreatePlaylistClick = { navController.navigate(Screen.CreatePlaylist.route) }
-            )
-        }
-
-        composable(Screen.Favorites.route) {
-            FavoritesScreen(
-                onBackClick = { navController.popBackStack() }
-            )
-        }
-
-        composable(Screen.CreatePlaylist.route) {
-            CreatePlaylistScreen(
-                onBackClick = { navController.popBackStack() },
-                onSaveClick = { _, _ -> navController.popBackStack() }
-            )
-        }
-
-        composable(Screen.TrackDetails.route) {
-            val track =
-                navController.previousBackStackEntry
-                    ?.savedStateHandle
-                    ?.get<Track>("track")
-
-            if (track == null) {
-                TrackDetailsScreenError(
-                    onBackClick = { navController.popBackStack() }
-                )
-                return@composable
-            }
-
-            val viewModel: TrackDetailsViewModel = viewModel(
-                factory = TrackDetailsViewModel.getViewModelFactory(track)
-            )
-
-            TrackDetailsScreen(
-                viewModel = viewModel,
-                onBackClick = { navController.popBackStack() }
             )
         }
     }
