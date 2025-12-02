@@ -124,7 +124,10 @@ fun SearchScreen(
 
                 SearchBasicField(
                     value = text,
-                    onValueChange = { newText -> text = newText },
+                    onValueChange = { newText ->
+                        text = newText
+                        viewModel.onQueryChange(newText)
+                    },
                     placeholderText = stringResource(R.string.search_songs_placeholder),
                     focusRequester = focusRequester,
                     onFocusChanged = { focused ->

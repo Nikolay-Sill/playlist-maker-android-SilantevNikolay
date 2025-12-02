@@ -10,19 +10,42 @@ import com.example.project.domain.Track
 import com.example.project.domain.TracksRepository
 import com.example.project.domain.Word
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.debounce
+import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import java.io.IOException
 
+@OptIn(FlowPreview::class)
 class SearchViewModel(
     private val tracksRepository: TracksRepository
 ) : ViewModel() {
     private val searchHistoryRepository = SearchHistoryRepositoryImpl(scope = viewModelScope)
-
     private val _searchScreenState = MutableStateFlow<SearchState>(SearchState.Initial)
     val searchScreenState = _searchScreenState.asStateFlow()
+    private val _query = MutableStateFlow("")
+
+    init {
+        viewModelScope.launch {
+            _query
+                .debounce(500)
+                .distinctUntilChanged()
+                .collect { query ->
+                    if (query.isEmpty()) {
+                        clearSearch()
+                    } else {
+                        search(query)
+                    }
+                }
+        }
+    }
+
+    fun onQueryChange(newValue: String) {
+        _query.value = newValue
+    }
 
     fun search(whatSearch: String) {
         viewModelScope.launch(Dispatchers.IO) {
