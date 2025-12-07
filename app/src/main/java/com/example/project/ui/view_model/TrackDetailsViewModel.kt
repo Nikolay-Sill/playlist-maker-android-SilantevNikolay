@@ -7,6 +7,7 @@ import com.example.project.domain.TracksRepository
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 
 class TrackDetailsViewModel(
@@ -26,25 +27,22 @@ class TrackDetailsViewModel(
     val isFavorite: StateFlow<Boolean> = _isFavorite.asStateFlow()
 
     init {
-        loadTrackDetails()
-    }
-
-    private fun loadTrackDetails() {
         viewModelScope.launch {
-            tracksRepository.getTrackByNameAndArtist(track).collect { dbTrack ->
-                dbTrack?.let {
-                    _isFavorite.value = it.favorite
-                    _state.value = State.Content(it)
+            tracksRepository.getTrackByNameAndArtist(track).collectLatest { updated ->
+                if (updated != null) {
+                    _state.value = State.Content(updated)
                 }
             }
         }
     }
 
     fun toggleFavorite() {
+        val current = (_state.value as? State.Content)?.track ?: return
+
+        val newFavorite = !current.favorite
+
         viewModelScope.launch {
-            val newFavoriteState = !_isFavorite.value
-            tracksRepository.updateTrackFavoriteStatus(track, newFavoriteState)
-            _isFavorite.value = newFavoriteState
+            tracksRepository.updateTrackFavoriteStatus(current, newFavorite)
         }
     }
 

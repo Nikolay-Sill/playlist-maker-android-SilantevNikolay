@@ -56,7 +56,7 @@ fun TrackDetailsScreen(
     when (state) {
         is TrackDetailsViewModel.State.Content -> {
             val track = (state as TrackDetailsViewModel.State.Content).track
-            TrackDetailsScreenContent(track, onBackClick)
+            TrackDetailsScreenContent(track, onBackClick, viewModel)
         }
 
         is TrackDetailsViewModel.State.Error -> TODO()
@@ -67,7 +67,8 @@ fun TrackDetailsScreen(
 @Composable
 private fun TrackDetailsScreenContent(
     track: Track,
-    onBackClick: () -> Unit
+    onBackClick: () -> Unit,
+    viewModel: TrackDetailsViewModel
 ) {
     val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
     val scope = rememberCoroutineScope()
@@ -182,9 +183,13 @@ private fun TrackDetailsScreenContent(
                 }
 
                 IconButton(
-                    onClick = {},
+                    onClick = { viewModel.toggleFavorite() },
                     modifier = Modifier.size(56.dp)
                 ) {
+                    val icon = if (track.favorite)
+                        R.drawable.ic_favorite_filled
+                    else
+                        R.drawable.ic_favorite_outline
                     Box(
                         modifier = Modifier
                             .size(56.dp)
@@ -193,7 +198,7 @@ private fun TrackDetailsScreenContent(
                         contentAlignment = Alignment.Center
                     ) {
                         Icon(
-                            painter = painterResource(id = R.drawable.ic_favorite_outline),
+                            painter = painterResource(id = icon),
                             contentDescription = stringResource(R.string.add_to_favorites),
                             tint = Color.White,
                             modifier = Modifier.size(32.dp)
