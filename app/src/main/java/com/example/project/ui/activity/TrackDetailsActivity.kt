@@ -58,6 +58,8 @@ fun TrackDetailsScreen(
             val track = (state as TrackDetailsViewModel.State.Content).track
             TrackDetailsScreenContent(track, onBackClick)
         }
+
+        is TrackDetailsViewModel.State.Error -> TODO()
     }
 }
 

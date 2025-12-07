@@ -1,29 +1,56 @@
 package com.example.project.ui.view_model
 
 import androidx.lifecycle.ViewModel
-import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.viewModelScope
 import com.example.project.domain.Track
+import com.example.project.domain.TracksRepository
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.launch
 
 class TrackDetailsViewModel(
-    track: Track
+    private val track: Track,
+    private val tracksRepository: TracksRepository
 ) : ViewModel() {
 
     sealed class State {
         data class Content(val track: Track) : State()
+        data class Error(val message: String) : State()
     }
 
     private val _state = MutableStateFlow<State>(State.Content(track))
-    val state: StateFlow<State> = _state
+    val state: StateFlow<State> = _state.asStateFlow()
 
-    companion object {
-        fun getViewModelFactory(track: Track): ViewModelProvider.Factory =
-            object : ViewModelProvider.Factory {
-                @Suppress("UNCHECKED_CAST")
-                override fun <T : ViewModel> create(modelClass: Class<T>): T {
-                    return TrackDetailsViewModel(track) as T
+    private val _isFavorite = MutableStateFlow(track.favorite)
+    val isFavorite: StateFlow<Boolean> = _isFavorite.asStateFlow()
+
+    init {
+        loadTrackDetails()
+    }
+
+    private fun loadTrackDetails() {
+        viewModelScope.launch {
+            tracksRepository.getTrackByNameAndArtist(track).collect { dbTrack ->
+                dbTrack?.let {
+                    _isFavorite.value = it.favorite
+                    _state.value = State.Content(it)
                 }
             }
+        }
+    }
+
+    fun toggleFavorite() {
+        viewModelScope.launch {
+            val newFavoriteState = !_isFavorite.value
+            tracksRepository.updateTrackFavoriteStatus(track, newFavoriteState)
+            _isFavorite.value = newFavoriteState
+        }
+    }
+
+    fun addToPlaylist(playlistId: Long) {
+        viewModelScope.launch {
+            tracksRepository.insertSongToPlaylist(track, playlistId)
+        }
     }
 }

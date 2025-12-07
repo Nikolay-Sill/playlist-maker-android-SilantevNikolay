@@ -46,11 +46,10 @@ import kotlinx.coroutines.launch
 
 @Composable
 fun SearchScreen(
+    viewModel: SearchViewModel,
     onBackClick: () -> Unit,
     onTrackClick: (Track) -> Unit
 ) {
-    val viewModel: SearchViewModel =
-        viewModel(factory = SearchViewModel.getViewModelFactory())
     val coroutineScope = rememberCoroutineScope()
 
     val screenState by viewModel.searchScreenState.collectAsState()
@@ -519,6 +518,7 @@ fun PlaceholderError(onRetry: () -> Unit) {
 fun SearchScreenPreview() {
     ProjectTheme {
         SearchScreen(
+            viewModel = viewModel(),
             onBackClick = {},
             onTrackClick = {}
         )

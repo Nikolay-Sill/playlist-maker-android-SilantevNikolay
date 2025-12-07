@@ -1,34 +1,32 @@
 package com.example.project.ui.view_model
 
 import androidx.lifecycle.ViewModel
-import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
-import com.example.project.data.network.RetrofitNetworkClient
-import com.example.project.data.network.SearchHistoryRepositoryImpl
-import com.example.project.data.network.TracksRepositoryImpl
+import com.example.project.domain.SearchHistoryRepository
 import com.example.project.domain.Track
 import com.example.project.domain.TracksRepository
-import com.example.project.domain.Word
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.FlowPreview
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.debounce
-import kotlinx.coroutines.flow.distinctUntilChanged
-import kotlinx.coroutines.flow.update
+import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 import java.io.IOException
 
-@OptIn(FlowPreview::class)
+@OptIn(ExperimentalStdlibApi::class, FlowPreview::class)
 class SearchViewModel(
-    private val tracksRepository: TracksRepository
+    private val tracksRepository: TracksRepository,
+    private val searchHistoryRepository: SearchHistoryRepository
 ) : ViewModel() {
-    private val searchHistoryRepository = SearchHistoryRepositoryImpl(scope = viewModelScope)
     private val _searchScreenState = MutableStateFlow<SearchState>(SearchState.Initial)
     val searchScreenState = _searchScreenState.asStateFlow()
+
+    private val _history = MutableStateFlow<List<com.example.project.domain.Word>>(emptyList())
+    val history = _history.asStateFlow()
+
     private val _query = MutableStateFlow("")
 
     init {
+        loadHistory()
+
         viewModelScope.launch {
             _query
                 .debounce(500)
@@ -43,6 +41,14 @@ class SearchViewModel(
         }
     }
 
+    private fun loadHistory() {
+        viewModelScope.launch {
+            searchHistoryRepository.getHistory().collect { historyList ->
+                _history.value = historyList
+            }
+        }
+    }
+
     fun onQueryChange(newValue: String) {
         _query.value = newValue
     }
@@ -50,32 +56,27 @@ class SearchViewModel(
     fun search(whatSearch: String) {
         viewModelScope.launch(Dispatchers.IO) {
             try {
-                _searchScreenState.update { SearchState.Searching }
+                _searchScreenState.value = SearchState.Searching
 
-                searchHistoryRepository.addToHistory(Word(word = whatSearch))
+                searchHistoryRepository.addToHistory(
+                    com.example.project.domain.Word(word = whatSearch)
+                )
+
                 val list = tracksRepository.searchTracks(expression = whatSearch)
-                _searchScreenState.update { SearchState.Success(list = list) }
+                _searchScreenState.value = SearchState.Success(list = list)
 
             } catch (e: IOException) {
-                _searchScreenState.update { SearchState.Fail(e.message.toString()) }
+                _searchScreenState.value = SearchState.Fail(e.message.toString())
             }
         }
     }
 
     fun clearSearch() {
-        _searchScreenState.update { SearchState.Initial }
+        _searchScreenState.value = SearchState.Initial
     }
 
-    suspend fun getHistoryList() = searchHistoryRepository.getHistory()
-
-    companion object {
-        fun getViewModelFactory(): ViewModelProvider.Factory =
-            object : ViewModelProvider.Factory {
-                @Suppress("UNCHECKED_CAST")
-                override fun <T : ViewModel> create(modelClass: Class<T>): T {
-                    return SearchViewModel(Creator.getTracksRepository()) as T
-                }
-            }
+    suspend fun getHistoryList(): List<com.example.project.domain.Word> {
+        return searchHistoryRepository.getHistory().first()
     }
 }
 
@@ -84,12 +85,4 @@ sealed class SearchState {
     object Searching : SearchState()
     data class Success(val list: List<Track>) : SearchState()
     data class Fail(val error: String) : SearchState()
-}
-
-object Creator {
-    fun getTracksRepository(): TracksRepository {
-        return TracksRepositoryImpl(
-            RetrofitNetworkClient()
-        )
-    }
 }

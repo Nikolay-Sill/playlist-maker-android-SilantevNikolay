@@ -1,11 +1,11 @@
 package com.example.project.ui.navigation
 
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.remember
-import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import androidx.navigation.navArgument
 import com.example.project.domain.Track
 import com.example.project.ui.activity.CreatePlaylistScreen
 import com.example.project.ui.activity.FavoritesScreen
@@ -18,7 +18,10 @@ import com.example.project.ui.activity.TrackDetailsScreen
 import com.example.project.ui.activity.TrackDetailsScreenError
 import com.example.project.ui.view_model.PlaylistDetailsViewModel
 import com.example.project.ui.view_model.PlaylistsViewModel
+import com.example.project.ui.view_model.SearchViewModel
 import com.example.project.ui.view_model.TrackDetailsViewModel
+import org.koin.compose.viewmodel.koinViewModel
+import org.koin.core.parameter.parametersOf
 
 sealed class Screen(val route: String) {
     object Main : Screen("main")
@@ -50,7 +53,10 @@ fun PlaylistHost() {
         }
 
         composable(Screen.Search.route) {
+            val searchViewModel: SearchViewModel = koinViewModel()
+
             SearchScreen(
+                viewModel = searchViewModel,
                 onBackClick = { navController.popBackStack() },
                 onTrackClick = { track ->
                     navController.currentBackStackEntry
@@ -68,24 +74,25 @@ fun PlaylistHost() {
             )
         }
 
-        composable(Screen.Playlists.route) { entry ->
-            val playlistsViewModel: PlaylistsViewModel = viewModel(entry)
+        composable(Screen.Playlists.route) {
+            val viewModel: PlaylistsViewModel = koinViewModel()
 
             PlaylistsScreen(
+                playlistsViewModel = viewModel,
                 onBackClick = { navController.popBackStack() },
                 onCreatePlaylistClick = { navController.navigate(Screen.CreatePlaylist.route) },
-                navigateToPlaylist = { index ->
-                    navController.navigate("playlist/$index")
-                },
-                playlistsViewModel = playlistsViewModel
+                navigateToPlaylist = { id -> navController.navigate("playlist/$id") }
             )
         }
 
-        composable(Screen.PlaylistDetails.route) { entry ->
-            val id = entry.arguments?.getString("id")?.toLong() ?: 0L
+        composable(
+            route = Screen.PlaylistDetails.route,
+            arguments = listOf(navArgument("id") { type = NavType.LongType })
+        ) { backStackEntry ->
+            val playlistId = backStackEntry.arguments?.getLong("id") ?: 0L
 
-            val viewModel: PlaylistDetailsViewModel = viewModel(
-                factory = PlaylistDetailsViewModel.factory(id)
+            val viewModel: PlaylistDetailsViewModel = koinViewModel(
+                parameters = { parametersOf(playlistId) }
             )
 
             PlaylistDetailsScreen(
@@ -95,7 +102,6 @@ fun PlaylistHost() {
                     navController.currentBackStackEntry
                         ?.savedStateHandle
                         ?.set("track", track)
-
                     navController.navigate(Screen.TrackDetails.route)
                 }
             )
@@ -108,12 +114,7 @@ fun PlaylistHost() {
         }
 
         composable(Screen.CreatePlaylist.route) { backStackEntry ->
-
-            val parentEntry = remember(backStackEntry) {
-                navController.getBackStackEntry(Screen.Playlists.route)
-            }
-
-            val playlistsViewModel: PlaylistsViewModel = viewModel(parentEntry)
+            val playlistsViewModel: PlaylistsViewModel = koinViewModel()
 
             CreatePlaylistScreen(
                 onBackClick = { navController.popBackStack() },
@@ -124,11 +125,10 @@ fun PlaylistHost() {
             )
         }
 
-        composable(Screen.TrackDetails.route) {
-            val track =
-                navController.previousBackStackEntry
-                    ?.savedStateHandle
-                    ?.get<Track>("track")
+        composable(Screen.TrackDetails.route) { backStackEntry ->
+            val track = navController.previousBackStackEntry
+                ?.savedStateHandle
+                ?.get<Track>("track")
 
             if (track == null) {
                 TrackDetailsScreenError(
@@ -137,8 +137,8 @@ fun PlaylistHost() {
                 return@composable
             }
 
-            val viewModel: TrackDetailsViewModel = viewModel(
-                factory = TrackDetailsViewModel.getViewModelFactory(track)
+            val viewModel: TrackDetailsViewModel = koinViewModel(
+                parameters = { parametersOf(track) }
             )
 
             TrackDetailsScreen(

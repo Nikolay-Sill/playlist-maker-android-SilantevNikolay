@@ -2,30 +2,39 @@ package com.example.project.ui.view_model
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.project.data.network.DatabaseMock
 import com.example.project.domain.Playlist
-import kotlinx.coroutines.Dispatchers
+import com.example.project.domain.PlaylistsRepository
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 
-class PlaylistsViewModel : ViewModel() {
+class PlaylistsViewModel(
+    private val playlistsRepository: PlaylistsRepository
+) : ViewModel() {
 
-    private val database = DatabaseMock(scope = viewModelScope)
+    private val _playlists = MutableStateFlow<List<Playlist>>(emptyList())
+    val playlists: StateFlow<List<Playlist>> = _playlists.asStateFlow()
 
-    val playlists: Flow<List<Playlist>> = flow {
-        val collected = mutableListOf<Playlist>()
+    init {
+        loadPlaylists()
+    }
 
-        database.getAllPlaylists().collect { playlist ->
-            if (playlist != null) {
-                collected.add(playlist)
-                emit(collected.toList())
+    private fun loadPlaylists() {
+        viewModelScope.launch {
+            playlistsRepository.getAllPlaylists().collect { playlists ->
+                _playlists.value = playlists
             }
         }
     }
 
     fun createNewPlaylist(name: String, description: String) {
-        viewModelScope.launch(Dispatchers.IO) {
-            database.addNewPlaylist(namePlaylist = name, description = description)
+        viewModelScope.launch {
+            playlistsRepository.addNewPlaylist(name, description)
+        }
+    }
+
+    fun deletePlaylist(id: Long) {
+        viewModelScope.launch {
+            playlistsRepository.deletePlaylistById(id)
         }
     }
 }

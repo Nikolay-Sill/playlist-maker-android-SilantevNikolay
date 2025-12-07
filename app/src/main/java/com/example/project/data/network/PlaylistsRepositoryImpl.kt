@@ -1,38 +1,61 @@
 package com.example.project.data.network
 
+import com.example.project.data.database.AppDatabase
+import com.example.project.data.database.mapper.PlaylistMapper.toEntity
+import com.example.project.data.database.mapper.PlaylistMapper.toPlaylist
+import com.example.project.data.database.mapper.TrackMapper.toTrack
 import com.example.project.domain.Playlist
 import com.example.project.domain.PlaylistsRepository
-import com.example.project.domain.Track
-import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.map
 
 class PlaylistsRepositoryImpl(
-    private val scope: CoroutineScope
+    database: AppDatabase
 ) : PlaylistsRepository {
-    private val database = DatabaseMock(
-        scope = scope,
-    )
+    private val playlistsDao = database.playlistsDao()
+    private val tracksDao = database.tracksDao()
 
     override fun getPlaylist(playlistId: Long): Flow<Playlist?> {
-        return database.getPlaylist(playlistId)
+        return playlistsDao.getPlaylistById(playlistId)
+            .combine(tracksDao.getTracksByPlaylistId(playlistId)) { playlistEntity, trackEntities ->
+                playlistEntity?.let { entity ->
+                    entity.toPlaylist(
+                        trackEntities.map { trackEntity -> trackEntity.toTrack() }
+                    )
+                }
+            }
     }
 
-    override fun getAllPlaylists(): Flow<Playlist?> {
-        return database.getAllPlaylists()
+    override fun getAllPlaylists(): Flow<List<Playlist>> {
+        return playlistsDao.getAllPlaylists()
+            .map { playlistEntities ->
+                playlistEntities.map { playlistEntity ->
+                    playlistEntity.toPlaylist()
+                }
+            }
     }
 
-    override suspend fun addNewPlaylist(id: Long, name: String, description: String, tracks: List<Track>) {
-        database.insertPlaylist(
-            Playlist(
-                id = id,
-                name = name,
-                description = description,
-                tracks = emptyList()
-            )
+    override suspend fun addNewPlaylist(name: String, description: String) {
+        val playlist = Playlist(
+            name = name,
+            description = description,
+            tracks = emptyList()
+        )
+        playlistsDao.insertPlaylist(
+            playlist.toEntity()
         )
     }
 
     override suspend fun deletePlaylistById(id: Long) {
-        database.deletePlaylistById(id = id)
+        val tracks = tracksDao.getTracksByPlaylistId(id)
+        tracks.collect { trackEntities ->
+            trackEntities.forEach { trackEntity ->
+                tracksDao.insertTrack(
+                    trackEntity.copy(playlistId = 0)
+                )
+            }
+        }
+        playlistsDao.deletePlaylistById(id)
     }
 }
