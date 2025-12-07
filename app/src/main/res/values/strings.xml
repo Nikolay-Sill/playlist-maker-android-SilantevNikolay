@@ -49,11 +49,12 @@
     <string name="cd_share">Поделиться</string>
     <string name="cd_support">Поддержка</string>
 
-    <string name="track_not_found">Трек не найден</string>
+    <string name="track_not_found">Ошибка: Трек не найден</string>
     <string name="add_to_playlist">Добавить в плейлист</string>
     <string name="add_to_favorites">Добавить в избранное</string>
     <string name="playlist_title">Добавить в плейлист</string>
     <string name="duration">Длительность</string>
+    <string name="playlists_not_found">Нет плейлистов</string>
 
     <string name="share_app_text">Посмотрите это крутое приложение Playlist Maker!</string>
     <string name="developer_email">kolia.silantiew@yandex.ru</string>

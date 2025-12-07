@@ -13,6 +13,9 @@ interface TracksDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertTrack(track: TrackEntity)
 
+    @Query("SELECT * FROM tracks")
+    fun getAllTracks(): Flow<List<TrackEntity>>
+
     @Query("SELECT * FROM tracks WHERE trackName = :name AND artistName = :artist")
     fun getTrackByNameAndArtist(name: String, artist: String): Flow<TrackEntity?>
 

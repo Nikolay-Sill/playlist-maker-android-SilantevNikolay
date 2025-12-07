@@ -1,6 +1,7 @@
 package com.example.project.ui.activity
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -12,6 +13,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
@@ -40,6 +42,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
 import com.example.project.R
+import com.example.project.domain.Playlist
 import com.example.project.domain.Track
 import com.example.project.ui.theme.SurfaceWhite
 import com.example.project.ui.view_model.TrackDetailsViewModel
@@ -55,8 +58,16 @@ fun TrackDetailsScreen(
 
     when (state) {
         is TrackDetailsViewModel.State.Content -> {
-            val track = (state as TrackDetailsViewModel.State.Content).track
-            TrackDetailsScreenContent(track, onBackClick, viewModel)
+            val content = state as TrackDetailsViewModel.State.Content
+            TrackDetailsScreenContent(
+                track = content.track,
+                playlists = content.playlists,
+                onAddToPlaylist = { playlistId ->
+                    viewModel.addTrackToPlaylist(playlistId)
+                },
+                onBackClick = onBackClick,
+                viewModel = viewModel
+            )
         }
 
         is TrackDetailsViewModel.State.Error -> TODO()
@@ -65,8 +76,10 @@ fun TrackDetailsScreen(
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-private fun TrackDetailsScreenContent(
+fun TrackDetailsScreenContent(
     track: Track,
+    playlists: List<Playlist>,
+    onAddToPlaylist: (Long) -> Unit,
     onBackClick: () -> Unit,
     viewModel: TrackDetailsViewModel
 ) {
@@ -85,13 +98,38 @@ private fun TrackDetailsScreenContent(
                     fontSize = 20.sp,
                     fontWeight = FontWeight.Bold
                 )
+
                 Spacer(modifier = Modifier.height(12.dp))
 
-                Text(
-                    text = "Нет плейлистов",
-                    fontSize = 18.sp,
-                    modifier = Modifier.padding(vertical = 12.dp)
-                )
+                if (playlists.isEmpty()) {
+                    Text(stringResource(R.string.playlists_not_found), fontSize = 18.sp)
+                } else {
+                    playlists.forEach { playlist ->
+                        Row(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .clickable {
+                                    onAddToPlaylist(playlist.id)
+                                    isSheetOpen = false
+                                    scope.launch { sheetState.hide() }
+                                }
+                                .padding(vertical = 12.dp),
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
+                            Icon(
+                                painter = painterResource(id = R.drawable.ic_music),
+                                contentDescription = null,
+                                modifier = Modifier.size(32.dp)
+                            )
+                            Spacer(modifier = Modifier.width(12.dp))
+                            Text(
+                                playlist.name,
+                                fontSize = 18.sp,
+                                color = Color.Black
+                            )
+                        }
+                    }
+                }
 
                 Spacer(modifier = Modifier.height(20.dp))
             }
@@ -170,7 +208,9 @@ private fun TrackDetailsScreenContent(
                         modifier = Modifier
                             .size(56.dp)
                             .clip(CircleShape)
-                            .background(Color.Gray),
+                            .background(
+                                if (track.playlistId != 0L) Color(0xFF3772E7) else Color.Gray
+                            ),
                         contentAlignment = Alignment.Center
                     ) {
                         Icon(
@@ -244,7 +284,7 @@ fun TrackDetailsScreenError(onBackClick: () -> Unit) {
                 .fillMaxSize(),
             contentAlignment = Alignment.Center
         ) {
-            Text(text = "Ошибка: трек не найден")
+            Text(text = stringResource(R.string.track_not_found))
         }
     }
 }

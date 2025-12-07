@@ -139,7 +139,7 @@ fun PlaylistListItem(playlist: Playlist, onClick: () -> Unit) {
         verticalAlignment = Alignment.CenterVertically
     ) {
         Icon(
-            painter = painterResource(id = R.drawable.ic_music),
+            painter = painterResource(id = R.drawable.ic_add_photo),
             contentDescription = playlist.name,
             tint = Color.Gray,
             modifier = Modifier.size(48.dp)

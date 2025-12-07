@@ -8,7 +8,6 @@ import com.example.project.domain.Playlist
 import com.example.project.domain.PlaylistsRepository
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.combine
-import kotlinx.coroutines.flow.map
 
 class PlaylistsRepositoryImpl(
     database: AppDatabase
@@ -28,12 +27,20 @@ class PlaylistsRepositoryImpl(
     }
 
     override fun getAllPlaylists(): Flow<List<Playlist>> {
-        return playlistsDao.getAllPlaylists()
-            .map { playlistEntities ->
-                playlistEntities.map { playlistEntity ->
-                    playlistEntity.toPlaylist()
-                }
+        return combine(
+            playlistsDao.getAllPlaylists(),
+            tracksDao.getAllTracks()
+        ) { playlistEntities, trackEntities ->
+
+            playlistEntities.map { playlist ->
+
+                val tracks = trackEntities
+                    .filter { it.playlistId == playlist.id }
+                    .map { it.toTrack() }
+
+                playlist.toPlaylist(tracks)
             }
+        }
     }
 
     override suspend fun addNewPlaylist(name: String, description: String) {

@@ -62,7 +62,8 @@ val appModule = module {
     viewModel { (track: Track) ->
         TrackDetailsViewModel(
             track = track,
-            tracksRepository = get()
+            tracksRepository = get(),
+            playlistsRepository = get()
         )
     }
 }
