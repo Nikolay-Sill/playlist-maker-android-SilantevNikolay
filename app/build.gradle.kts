@@ -54,6 +54,7 @@ dependencies {
     implementation(libs.koin.androidx.compose)
     implementation(libs.androidx.room)
     implementation(libs.androidx.room.ktx)
+    implementation(libs.androidx.compose.foundation)
     ksp(libs.androidx.room.ksp)
     implementation(libs.coil.compose)
     implementation(libs.retrofit)

@@ -15,6 +15,7 @@ import com.example.project.ui.activity.PlaylistsScreen
 import com.example.project.ui.activity.SearchScreen
 import com.example.project.ui.activity.SettingsScreen
 import com.example.project.ui.activity.TrackDetailsScreen
+import com.example.project.ui.view_model.FavoritesViewModel
 import com.example.project.ui.view_model.PlaylistDetailsViewModel
 import com.example.project.ui.view_model.PlaylistsViewModel
 import com.example.project.ui.view_model.SearchViewModel
@@ -107,8 +108,17 @@ fun PlaylistHost() {
         }
 
         composable(Screen.Favorites.route) {
+            val viewModel: FavoritesViewModel = koinViewModel()
+
             FavoritesScreen(
-                onBackClick = { navController.popBackStack() }
+                viewModel = viewModel,
+                onBackClick = { navController.popBackStack() },
+                onTrackClick = { track ->
+                    navController.currentBackStackEntry
+                        ?.savedStateHandle
+                        ?.set("track", track)
+                    navController.navigate(Screen.TrackDetails.route)
+                }
             )
         }
 

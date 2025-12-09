@@ -12,6 +12,7 @@ import com.example.project.domain.PlaylistsRepository
 import com.example.project.domain.SearchHistoryRepository
 import com.example.project.domain.TracksRepository
 import com.example.project.domain.Track
+import com.example.project.ui.view_model.FavoritesViewModel
 import com.example.project.ui.view_model.PlaylistDetailsViewModel
 import com.example.project.ui.view_model.PlaylistsViewModel
 import com.example.project.ui.view_model.SearchViewModel
@@ -72,6 +73,12 @@ val appModule = module {
             track = track,
             tracksRepository = get(),
             playlistsRepository = get()
+        )
+    }
+
+    viewModel {
+        FavoritesViewModel(
+            tracksRepository = get()
         )
     }
 }
