@@ -35,6 +35,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
@@ -44,6 +45,8 @@ import coil.compose.AsyncImage
 import com.example.project.R
 import com.example.project.domain.Playlist
 import com.example.project.domain.Track
+import com.example.project.ui.theme.ErrorRed
+import com.example.project.ui.theme.PrimaryBlue
 import com.example.project.ui.theme.SurfaceWhite
 import com.example.project.ui.view_model.TrackDetailsViewModel
 import kotlinx.coroutines.launch
@@ -209,7 +212,9 @@ fun TrackDetailsScreenContent(
                             .size(56.dp)
                             .clip(CircleShape)
                             .background(
-                                if (track.playlistId != 0L) Color(0xFF3772E7) else Color.Gray
+                                if (track.playlistId != 0L)
+                                    PrimaryBlue
+                                else Color.Gray
                             ),
                         contentAlignment = Alignment.Center
                     ) {
@@ -234,7 +239,11 @@ fun TrackDetailsScreenContent(
                         modifier = Modifier
                             .size(56.dp)
                             .clip(CircleShape)
-                            .background(Color.Gray),
+                            .background(
+                                if (track.favorite)
+                                    ErrorRed
+                                else Color.Gray
+                            ),
                         contentAlignment = Alignment.Center
                     ) {
                         Icon(

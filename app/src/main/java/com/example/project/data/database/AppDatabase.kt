@@ -5,25 +5,21 @@ import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
 import com.example.project.data.database.dao.PlaylistDao
-import com.example.project.data.database.dao.SearchHistoryDao
 import com.example.project.data.database.dao.TracksDao
 import com.example.project.data.database.entity.PlaylistEntity
 import com.example.project.data.database.entity.TrackEntity
-import com.example.project.data.database.entity.WordEntity
 
 @Database(
     entities = [
         TrackEntity::class,
-        PlaylistEntity::class,
-        WordEntity::class
+        PlaylistEntity::class
     ],
-    version = 1,
+    version = 2,
     exportSchema = false
 )
 abstract class AppDatabase : RoomDatabase() {
     abstract fun tracksDao(): TracksDao
     abstract fun playlistsDao(): PlaylistDao
-    abstract fun searchHistoryDao(): SearchHistoryDao
 
     companion object {
         @Volatile
@@ -35,7 +31,9 @@ abstract class AppDatabase : RoomDatabase() {
                     context.applicationContext,
                     AppDatabase::class.java,
                     "playlist_maker_db"
-                ).build()
+                )
+                    .fallbackToDestructiveMigration(false)
+                    .build()
                 INSTANCE = instance
                 instance
             }

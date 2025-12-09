@@ -5,6 +5,7 @@ import androidx.lifecycle.viewModelScope
 import com.example.project.domain.SearchHistoryRepository
 import com.example.project.domain.Track
 import com.example.project.domain.TracksRepository
+import com.example.project.domain.Word
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.flow.*
@@ -59,7 +60,7 @@ class SearchViewModel(
                 _searchScreenState.value = SearchState.Searching
 
                 searchHistoryRepository.addToHistory(
-                    com.example.project.domain.Word(word = whatSearch)
+                    Word(word = whatSearch)
                 )
 
                 val list = tracksRepository.searchTracks(expression = whatSearch)

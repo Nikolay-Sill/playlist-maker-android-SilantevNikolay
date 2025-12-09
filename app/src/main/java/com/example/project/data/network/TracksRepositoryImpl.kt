@@ -1,5 +1,6 @@
 package com.example.project.data.network
 
+import android.util.Log
 import com.example.project.data.database.AppDatabase
 import com.example.project.data.database.mapper.TrackMapper.toEntity
 import com.example.project.data.database.mapper.TrackMapper.toTrack
@@ -26,7 +27,7 @@ class TracksRepositoryImpl(
         return when (response.resultCode) {
             200 -> (response as TracksSearchResponse).results.map {
                 Track(
-                    id = it.id,
+                    id = it.trackId,
                     trackName = it.trackName,
                     artistName = it.artistName,
                     trackTime = SimpleDateFormat("mm:ss", Locale.getDefault())

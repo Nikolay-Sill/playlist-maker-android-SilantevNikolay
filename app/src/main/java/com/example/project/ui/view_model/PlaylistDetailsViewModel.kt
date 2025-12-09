@@ -1,7 +1,6 @@
 package com.example.project.ui.view_model
 
 import androidx.lifecycle.ViewModel
-import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
 import com.example.project.domain.Playlist
 import com.example.project.domain.PlaylistsRepository
@@ -43,8 +42,7 @@ class PlaylistDetailsViewModel(
     fun addTrackToPlaylist(track: com.example.project.domain.Track) {
         viewModelScope.launch {
             playlistsRepository.getPlaylist(playlistId).first()?.let { playlist ->
-                // Логика добавления трека в плейлист
-                // Нужно будет обновить репозиторий чтобы он поддерживал добавление треков
+
             }
         }
     }

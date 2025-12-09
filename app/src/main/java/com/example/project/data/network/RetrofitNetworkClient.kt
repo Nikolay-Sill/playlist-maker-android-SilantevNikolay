@@ -1,10 +1,13 @@
 package com.example.project.data.network
 
+import android.util.Log
 import com.example.project.data.dto.BaseResponse
 import com.example.project.data.dto.TracksSearchRequest
+import com.example.project.data.dto.TracksSearchResponse
 import com.example.project.domain.NetworkClient
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
+import java.io.IOException
 
 class RetrofitNetworkClient : NetworkClient {
 
@@ -26,9 +29,13 @@ class RetrofitNetworkClient : NetworkClient {
 
                 else -> BaseResponse().apply { resultCode = 400 }
             }
-        } catch (_: Exception) {
+        } catch (_: IOException) {
             BaseResponse().apply {
                 resultCode = -1
+            }
+        } catch (_: Exception) {
+            BaseResponse().apply {
+                resultCode = -2
             }
         }
     }

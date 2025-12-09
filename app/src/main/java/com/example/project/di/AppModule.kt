@@ -5,6 +5,8 @@ import com.example.project.data.network.PlaylistsRepositoryImpl
 import com.example.project.data.network.RetrofitNetworkClient
 import com.example.project.data.network.SearchHistoryRepositoryImpl
 import com.example.project.data.network.TracksRepositoryImpl
+import com.example.project.data.preferences.SearchHistoryPreferences
+import com.example.project.data.preferences.searchHistoryDataStore
 import com.example.project.domain.NetworkClient
 import com.example.project.domain.PlaylistsRepository
 import com.example.project.domain.SearchHistoryRepository
@@ -37,9 +39,15 @@ val appModule = module {
         )
     }
 
+    single {
+        SearchHistoryPreferences(
+            dataStore = androidContext().searchHistoryDataStore
+        )
+    }
+
     single<SearchHistoryRepository> {
         SearchHistoryRepositoryImpl(
-            database = get()
+            preferences = get()
         )
     }
 
