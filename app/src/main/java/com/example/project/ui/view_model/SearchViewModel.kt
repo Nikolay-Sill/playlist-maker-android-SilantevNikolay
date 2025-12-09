@@ -20,8 +20,7 @@ class SearchViewModel(
     private val _searchScreenState = MutableStateFlow<SearchState>(SearchState.Initial)
     val searchScreenState = _searchScreenState.asStateFlow()
 
-    private val _history = MutableStateFlow<List<com.example.project.domain.Word>>(emptyList())
-    val history = _history.asStateFlow()
+    private val _history = MutableStateFlow<List<Word>>(emptyList())
 
     private val _query = MutableStateFlow("")
 
@@ -76,7 +75,7 @@ class SearchViewModel(
         _searchScreenState.value = SearchState.Initial
     }
 
-    suspend fun getHistoryList(): List<com.example.project.domain.Word> {
+    suspend fun getHistoryList(): List<Word> {
         return searchHistoryRepository.getHistory().first()
     }
 }

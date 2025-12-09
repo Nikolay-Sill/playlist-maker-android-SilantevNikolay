@@ -17,6 +17,7 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -35,7 +36,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
@@ -48,6 +48,7 @@ import com.example.project.domain.Track
 import com.example.project.ui.theme.ErrorRed
 import com.example.project.ui.theme.PrimaryBlue
 import com.example.project.ui.theme.SurfaceWhite
+import com.example.project.ui.theme.TextPrimary
 import com.example.project.ui.view_model.TrackDetailsViewModel
 import kotlinx.coroutines.launch
 
@@ -60,6 +61,10 @@ fun TrackDetailsScreen(
     val state by viewModel.state.collectAsState()
 
     when (state) {
+        TrackDetailsViewModel.State.Loading -> {
+            TrackDetailsScreenLoading()
+        }
+
         is TrackDetailsViewModel.State.Content -> {
             val content = state as TrackDetailsViewModel.State.Content
             TrackDetailsScreenContent(
@@ -73,7 +78,11 @@ fun TrackDetailsScreen(
             )
         }
 
-        is TrackDetailsViewModel.State.Error -> TODO()
+        is TrackDetailsViewModel.State.Error -> {
+            TrackDetailsScreenError(
+                onBackClick = onBackClick
+            )
+        }
     }
 }
 
@@ -144,137 +153,152 @@ fun TrackDetailsScreenContent(
             .fillMaxSize()
             .background(SurfaceWhite)
     ) {
-
         Box(
             modifier = Modifier
                 .fillMaxWidth()
-                .fillMaxHeight(0.48f)
+                .height(70.dp)
+                .background(SurfaceWhite),
+            contentAlignment = Alignment.CenterStart
         ) {
-            AsyncImage(
-                model = track.image,
-                placeholder = painterResource(id = R.drawable.ic_music),
-                contentDescription = null,
-                modifier = Modifier.fillMaxSize(),
-                contentScale = ContentScale.Crop
-            )
-
-            IconButton(
-                onClick = onBackClick,
+            Row(
                 modifier = Modifier
-                    .padding(16.dp)
-                    .size(27.dp)
-                    .align(Alignment.TopStart)
+                    .fillMaxWidth()
+                    .padding(horizontal = 16.dp),
+                verticalAlignment = Alignment.CenterVertically
             ) {
-                Icon(
-                    painter = painterResource(id = R.drawable.ic_arrow_back),
-                    contentDescription = stringResource(R.string.back),
-                    tint = Color.Black
-                )
+                IconButton(
+                    onClick = onBackClick,
+                    modifier = Modifier.size(24.dp)
+                ) {
+                    Icon(
+                        painter = painterResource(id = R.drawable.ic_arrow_back),
+                        contentDescription = stringResource(R.string.cd_back),
+                        tint = TextPrimary
+                    )
+                }
             }
         }
 
         Column(
             modifier = Modifier
-                .fillMaxWidth()
-                .padding(24.dp)
+                .fillMaxSize()
         ) {
-            Text(
-                text = track.trackName,
-                fontSize = 24.sp,
-                fontWeight = FontWeight.Bold,
-                color = Color.Black
-            )
-
-            Spacer(modifier = Modifier.height(8.dp))
-
-            Text(
-                text = track.artistName,
-                fontSize = 16.sp,
-                color = Color.Black
-            )
-
-            Spacer(modifier = Modifier.height(50.dp))
-
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.SpaceBetween
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .fillMaxHeight(0.48f)
             ) {
-
-                IconButton(
-                    onClick = {
-                        isSheetOpen = true
-                        scope.launch { sheetState.show() }
-                    },
-                    modifier = Modifier.size(56.dp)
-                ) {
-                    Box(
-                        modifier = Modifier
-                            .size(56.dp)
-                            .clip(CircleShape)
-                            .background(
-                                if (track.playlistId != 0L)
-                                    PrimaryBlue
-                                else Color.Gray
-                            ),
-                        contentAlignment = Alignment.Center
-                    ) {
-                        Icon(
-                            painter = painterResource(id = R.drawable.ic_add_playlist),
-                            contentDescription = stringResource(R.string.add_to_playlist),
-                            tint = Color.White,
-                            modifier = Modifier.size(28.dp)
-                        )
-                    }
-                }
-
-                IconButton(
-                    onClick = { viewModel.toggleFavorite() },
-                    modifier = Modifier.size(56.dp)
-                ) {
-                    val icon = if (track.favorite)
-                        R.drawable.ic_favorite_filled
-                    else
-                        R.drawable.ic_favorite_outline
-                    Box(
-                        modifier = Modifier
-                            .size(56.dp)
-                            .clip(CircleShape)
-                            .background(
-                                if (track.favorite)
-                                    ErrorRed
-                                else Color.Gray
-                            ),
-                        contentAlignment = Alignment.Center
-                    ) {
-                        Icon(
-                            painter = painterResource(id = icon),
-                            contentDescription = stringResource(R.string.add_to_favorites),
-                            tint = Color.White,
-                            modifier = Modifier.size(32.dp)
-                        )
-                    }
-                }
+                AsyncImage(
+                    model = track.image,
+                    placeholder = painterResource(id = R.drawable.ic_music),
+                    contentDescription = null,
+                    modifier = Modifier.fillMaxSize(),
+                    contentScale = ContentScale.Crop
+                )
             }
 
-            Spacer(modifier = Modifier.height(35.dp))
-
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.SpaceBetween,
-                verticalAlignment = Alignment.CenterVertically
+            Column(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(24.dp)
             ) {
                 Text(
-                    text = stringResource(R.string.duration),
-                    fontSize = 16.sp,
-                    color = Color.DarkGray
+                    text = track.trackName,
+                    fontSize = 24.sp,
+                    fontWeight = FontWeight.Bold,
+                    color = Color.Black
                 )
 
+                Spacer(modifier = Modifier.height(8.dp))
+
                 Text(
-                    text = track.trackTime,
+                    text = track.artistName,
                     fontSize = 16.sp,
-                    color = Color.Black,
-                    fontWeight = FontWeight.Medium
+                    color = Color.Black
                 )
+
+                Spacer(modifier = Modifier.height(50.dp))
+
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.SpaceBetween
+                ) {
+                    IconButton(
+                        onClick = {
+                            isSheetOpen = true
+                            scope.launch { sheetState.show() }
+                        },
+                        modifier = Modifier.size(56.dp)
+                    ) {
+                        Box(
+                            modifier = Modifier
+                                .size(56.dp)
+                                .clip(CircleShape)
+                                .background(
+                                    if (track.playlistId != 0L)
+                                        PrimaryBlue
+                                    else Color.Gray
+                                ),
+                            contentAlignment = Alignment.Center
+                        ) {
+                            Icon(
+                                painter = painterResource(id = R.drawable.ic_add_playlist),
+                                contentDescription = stringResource(R.string.add_to_playlist),
+                                tint = Color.White,
+                                modifier = Modifier.size(28.dp)
+                            )
+                        }
+                    }
+
+                    IconButton(
+                        onClick = { viewModel.toggleFavorite() },
+                        modifier = Modifier.size(56.dp)
+                    ) {
+                        val icon = if (track.favorite)
+                            R.drawable.ic_favorite_filled
+                        else
+                            R.drawable.ic_favorite_outline
+                        Box(
+                            modifier = Modifier
+                                .size(56.dp)
+                                .clip(CircleShape)
+                                .background(
+                                    if (track.favorite)
+                                        ErrorRed
+                                    else Color.Gray
+                                ),
+                            contentAlignment = Alignment.Center
+                        ) {
+                            Icon(
+                                painter = painterResource(id = icon),
+                                contentDescription = stringResource(R.string.add_to_favorites),
+                                tint = Color.White,
+                                modifier = Modifier.size(32.dp)
+                            )
+                        }
+                    }
+                }
+
+                Spacer(modifier = Modifier.height(35.dp))
+
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.SpaceBetween,
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Text(
+                        text = stringResource(R.string.duration),
+                        fontSize = 16.sp,
+                        color = Color.DarkGray
+                    )
+
+                    Text(
+                        text = track.trackTime,
+                        fontSize = 16.sp,
+                        color = Color.Black,
+                        fontWeight = FontWeight.Medium
+                    )
+                }
             }
         }
     }
@@ -295,5 +319,17 @@ fun TrackDetailsScreenError(onBackClick: () -> Unit) {
         ) {
             Text(text = stringResource(R.string.track_not_found))
         }
+    }
+}
+
+@Composable
+fun TrackDetailsScreenLoading() {
+    Box(
+        modifier = Modifier
+            .fillMaxSize()
+            .background(SurfaceWhite),
+        contentAlignment = Alignment.Center
+    ) {
+        CircularProgressIndicator()
     }
 }

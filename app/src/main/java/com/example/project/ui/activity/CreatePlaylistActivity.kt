@@ -62,7 +62,7 @@ fun CreatePlaylistScreen(
         Box(
             modifier = Modifier
                 .fillMaxWidth()
-                .height(56.dp)
+                .height(70.dp)
                 .background(SurfaceWhite),
             contentAlignment = Alignment.CenterStart
         ) {
@@ -87,7 +87,7 @@ fun CreatePlaylistScreen(
 
                 Text(
                     text = stringResource(R.string.create_playlist_title),
-                    color = TextPrimary,
+                    color = TextPrimary ,
                     fontSize = 20.sp,
                     fontWeight = FontWeight.Bold
                 )

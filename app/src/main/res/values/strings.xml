@@ -29,6 +29,7 @@
     <string name="no_email_app">Почтовое приложение не найдено</string>
     <string name="no_browser_app">Браузер не найден</string>
 
+    <string name="playlists_title">Плейлисты</string>
     <string name="playlists_empty">Плейлисты отсутствуют</string>
     <string name="create_playlist_title">Новый плейлист</string>
     <string name="playlist_name_required">Название*</string>
@@ -39,6 +40,8 @@
 
     <string name="favorites_title">Избранное</string>
     <string name="favorites_empty">Здесь будут ваши избранные треки</string>
+
+    <string name="playlist_details_title">Плейлист</string>
 
     <string name="cd_back">Назад</string>
     <string name="cd_search">Поиск</string>

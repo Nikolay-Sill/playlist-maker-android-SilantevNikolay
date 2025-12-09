@@ -1,9 +1,7 @@
 package com.example.project.data.network
 
-import android.util.Log
 import com.example.project.data.dto.BaseResponse
 import com.example.project.data.dto.TracksSearchRequest
-import com.example.project.data.dto.TracksSearchResponse
 import com.example.project.domain.NetworkClient
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory

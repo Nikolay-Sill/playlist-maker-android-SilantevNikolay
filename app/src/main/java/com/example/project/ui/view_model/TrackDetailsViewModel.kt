@@ -20,6 +20,7 @@ class TrackDetailsViewModel(
 
     sealed class State {
         data class Content(val track: Track, val playlists: List<Playlist>) : State()
+        object Loading : State()
         data class Error(val message: String) : State()
     }
 

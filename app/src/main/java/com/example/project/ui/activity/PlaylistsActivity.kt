@@ -16,7 +16,6 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
@@ -61,7 +60,8 @@ fun PlaylistsScreen(
             Box(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .height(56.dp),
+                    .height(70.dp)
+                    .background(SurfaceWhite),
                 contentAlignment = Alignment.CenterStart
             ) {
                 Row(
@@ -75,7 +75,7 @@ fun PlaylistsScreen(
                         modifier = Modifier.size(24.dp)
                     ) {
                         Icon(
-                            imageVector = Icons.AutoMirrored.Filled.ArrowBack,
+                            painter = painterResource(id = R.drawable.ic_arrow_back),
                             contentDescription = stringResource(R.string.cd_back),
                             tint = TextPrimary
                         )
@@ -84,8 +84,8 @@ fun PlaylistsScreen(
                     Spacer(modifier = Modifier.width(12.dp))
 
                     Text(
-                        text = stringResource(R.string.playlists),
-                        color = TextPrimary,
+                        text = stringResource(R.string.playlist_title),
+                        color = TextPrimary ,
                         fontSize = 20.sp,
                         fontWeight = FontWeight.Bold
                     )

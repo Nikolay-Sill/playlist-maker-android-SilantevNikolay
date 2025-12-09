@@ -40,7 +40,7 @@ fun FavoritesScreen(
         Box(
             modifier = Modifier
                 .fillMaxWidth()
-                .height(56.dp)
+                .height(70.dp)
                 .background(SurfaceWhite),
             contentAlignment = Alignment.CenterStart
         ) {
@@ -65,7 +65,7 @@ fun FavoritesScreen(
 
                 Text(
                     text = stringResource(R.string.favorites_title),
-                    color = TextPrimary,
+                    color = TextPrimary ,
                     fontSize = 20.sp,
                     fontWeight = FontWeight.Bold
                 )

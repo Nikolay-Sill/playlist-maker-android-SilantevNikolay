@@ -15,7 +15,6 @@ import com.example.project.ui.activity.PlaylistsScreen
 import com.example.project.ui.activity.SearchScreen
 import com.example.project.ui.activity.SettingsScreen
 import com.example.project.ui.activity.TrackDetailsScreen
-import com.example.project.ui.activity.TrackDetailsScreenError
 import com.example.project.ui.view_model.PlaylistDetailsViewModel
 import com.example.project.ui.view_model.PlaylistsViewModel
 import com.example.project.ui.view_model.SearchViewModel
@@ -97,7 +96,7 @@ fun PlaylistHost() {
 
             PlaylistDetailsScreen(
                 viewModel = viewModel,
-                onBack = { navController.popBackStack() },
+                onBackClick = { navController.popBackStack() },
                 onTrackClick = { track ->
                     navController.currentBackStackEntry
                         ?.savedStateHandle
@@ -130,12 +129,6 @@ fun PlaylistHost() {
                 ?.savedStateHandle
                 ?.get<Track>("track")
 
-            if (track == null) {
-                TrackDetailsScreenError(
-                    onBackClick = { navController.popBackStack() }
-                )
-                return@composable
-            }
 
             val viewModel: TrackDetailsViewModel = koinViewModel(
                 parameters = { parametersOf(track) }

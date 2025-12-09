@@ -19,7 +19,6 @@ class PlaylistDetailsViewModel(
     val playlist: StateFlow<Playlist?> = _playlist.asStateFlow()
 
     private val _isLoading = MutableStateFlow(true)
-    val isLoading: StateFlow<Boolean> = _isLoading.asStateFlow()
 
     init {
         loadPlaylist()
