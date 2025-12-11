@@ -10,6 +10,7 @@ object PlaylistMapper {
             id = this.id,
             name = this.name,
             description = this.description,
+            coverImageUri = this.coverImageUri,
             tracks = tracks
         )
     }
@@ -18,7 +19,8 @@ object PlaylistMapper {
         return PlaylistEntity(
             id = this.id,
             name = this.name,
-            description = this.description
+            description = this.description,
+            coverImageUri = this.coverImageUri
         )
     }
 }
