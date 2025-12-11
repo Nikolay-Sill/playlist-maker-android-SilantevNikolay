@@ -74,4 +74,16 @@ class TracksRepositoryImpl(
         return tracksDao.getTracksByPlaylistId(playlistId)
             .map { entities -> entities.map { it.toTrack() } }
     }
+
+    override suspend fun clearPlaylistForTrack(track: Track) {
+        tracksDao.insertTrack(
+            track.copy(playlistId = 0).toEntity()
+        )
+    }
+
+    override suspend fun deleteIfNotFavoriteAndNotInPlaylist(track: Track) {
+        if (!track.favorite && track.playlistId == 0L) {
+            tracksDao.deleteTrack(track.id)
+        }
+    }
 }

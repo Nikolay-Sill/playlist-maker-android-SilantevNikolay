@@ -2,6 +2,7 @@ package com.example.project.ui.activity
 
 import android.annotation.SuppressLint
 import androidx.compose.foundation.background
+import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -168,9 +169,11 @@ fun PlaylistDetailsScreen(
         } else {
             LazyColumn(modifier = Modifier.fillMaxSize()) {
                 items(tracks) { track ->
-                    PlaylistTrackItem(track) {
-                        onTrackClick(track)
-                    }
+                    PlaylistTrackItem(
+                        track = track,
+                        onClick = { onTrackClick(track) },
+                        onLongClick = { viewModel.removeTrack(track) }
+                    )
                 }
             }
         }
@@ -180,13 +183,17 @@ fun PlaylistDetailsScreen(
 @Composable
 fun PlaylistTrackItem(
     track: Track,
-    onClick: (Track) -> Unit
+    onClick: (Track) -> Unit,
+    onLongClick: (() -> Unit)? = null
 ) {
     Card(
-        onClick = { onClick(track) },
         modifier = Modifier
             .fillMaxWidth()
-            .padding(horizontal = 7.dp),
+            .padding(horizontal = 7.dp)
+            .combinedClickable(
+                onClick = { onClick(track) },
+                onLongClick = onLongClick
+            ),
         colors = CardDefaults.cardColors(
             containerColor = SurfaceWhite
         ),

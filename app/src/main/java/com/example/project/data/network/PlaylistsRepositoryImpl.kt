@@ -3,9 +3,11 @@ package com.example.project.data.network
 import com.example.project.data.database.AppDatabase
 import com.example.project.data.database.mapper.PlaylistMapper.toEntity
 import com.example.project.data.database.mapper.PlaylistMapper.toPlaylist
+import com.example.project.data.database.mapper.TrackMapper.toEntity
 import com.example.project.data.database.mapper.TrackMapper.toTrack
 import com.example.project.domain.Playlist
 import com.example.project.domain.PlaylistsRepository
+import com.example.project.domain.Track
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.combine
 
@@ -65,5 +67,19 @@ class PlaylistsRepositoryImpl(
             }
         }
         playlistsDao.deletePlaylistById(id)
+    }
+
+    override suspend fun removeTrackFromPlaylist(track: Track) {
+        if (track.favorite) {
+            tracksDao.insertTrack(
+                track.copy(playlistId = 0).toEntity()
+            )
+        } else {
+            tracksDao.removeTrackFromPlaylist(track.id, track.playlistId)
+
+            val newTrack = track.copy(playlistId = 0)
+            tracksDao.insertTrack(newTrack.toEntity())
+            tracksDao.deleteTrack(track.id)
+        }
     }
 }

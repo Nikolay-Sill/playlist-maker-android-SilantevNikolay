@@ -30,7 +30,9 @@ class FavoritesViewModel(
 
     fun toggleFavorite(track: Track, isFavorite: Boolean) {
         viewModelScope.launch {
-            tracksRepository.updateTrackFavoriteStatus(track, isFavorite)
+            val updated = track.copy(favorite = isFavorite)
+            tracksRepository.updateTrackFavoriteStatus(updated, isFavorite)
+            tracksRepository.deleteIfNotFavoriteAndNotInPlaylist(updated)
         }
     }
 }

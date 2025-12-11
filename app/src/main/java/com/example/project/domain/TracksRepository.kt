@@ -18,4 +18,8 @@ interface TracksRepository {
     suspend fun getTracksByPlaylistId(playlistId: Long): List<Track>
 
     fun getTracksByPlaylistIdFlow(playlistId: Long): Flow<List<Track>>
+
+    suspend fun clearPlaylistForTrack(track: Track)
+
+    suspend fun deleteIfNotFavoriteAndNotInPlaylist(track: Track)
 }

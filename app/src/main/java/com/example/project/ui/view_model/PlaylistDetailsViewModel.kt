@@ -34,6 +34,12 @@ class PlaylistDetailsViewModel(
         }
     }
 
+    fun removeTrack(track: Track) {
+        viewModelScope.launch {
+            playlistsRepository.removeTrackFromPlaylist(track)
+        }
+    }
+
     fun getTotalDurationMinutes(tracks: List<Track>): Int {
         return tracks.sumOf { track ->
             track.trackTime
