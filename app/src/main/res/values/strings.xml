@@ -43,6 +43,8 @@
 
     <string name="playlist_details_title">Плейлист</string>
     <string name="playlist_cover">Обложка плейлиста</string>
+    <string name="no_tracks">Треков нет</string>
+    <string name="loading">Загрузка…</string>
 
     <string name="cd_back">Назад</string>
     <string name="cd_search">Поиск</string>
