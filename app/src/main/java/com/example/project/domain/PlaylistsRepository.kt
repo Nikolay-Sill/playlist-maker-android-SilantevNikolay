@@ -9,7 +9,5 @@ interface PlaylistsRepository {
 
     suspend fun addNewPlaylist(name: String, description: String, coverImageUri: String? = null)
 
-    suspend fun deletePlaylistById(id: Long)
-
     suspend fun removeTrackFromPlaylist(track: Track)
 }

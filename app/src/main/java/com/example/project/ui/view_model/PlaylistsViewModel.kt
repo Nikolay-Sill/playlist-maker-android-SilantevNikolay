@@ -25,10 +25,4 @@ class PlaylistsViewModel(
             }
         }
     }
-
-    fun deletePlaylist(id: Long) {
-        viewModelScope.launch {
-            playlistsRepository.deletePlaylistById(id)
-        }
-    }
 }

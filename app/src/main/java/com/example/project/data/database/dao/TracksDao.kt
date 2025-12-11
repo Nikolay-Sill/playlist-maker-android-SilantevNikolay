@@ -4,7 +4,6 @@ import androidx.room.Dao
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
-import androidx.room.Update
 import com.example.project.data.database.entity.TrackEntity
 import kotlinx.coroutines.flow.Flow
 
@@ -27,9 +26,6 @@ interface TracksDao {
 
     @Query("DELETE FROM tracks WHERE id = :trackId AND playlistId = :playlistId")
     suspend fun removeTrackFromPlaylist(trackId: Long, playlistId: Long)
-
-    @Update
-    suspend fun updateTrack(track: TrackEntity)
 
     @Query("DELETE FROM tracks WHERE id = :trackId")
     suspend fun deleteTrack(trackId: Long)

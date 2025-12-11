@@ -57,18 +57,6 @@ class PlaylistsRepositoryImpl(
         )
     }
 
-    override suspend fun deletePlaylistById(id: Long) {
-        val tracks = tracksDao.getTracksByPlaylistId(id)
-        tracks.collect { trackEntities ->
-            trackEntities.forEach { trackEntity ->
-                tracksDao.insertTrack(
-                    trackEntity.copy(playlistId = 0)
-                )
-            }
-        }
-        playlistsDao.deletePlaylistById(id)
-    }
-
     override suspend fun removeTrackFromPlaylist(track: Track) {
         if (track.favorite) {
             tracksDao.insertTrack(

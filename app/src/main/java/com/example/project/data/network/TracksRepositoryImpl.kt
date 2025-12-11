@@ -56,28 +56,9 @@ class TracksRepositoryImpl(
         )
     }
 
-    override suspend fun deleteSongFromPlaylist(track: Track) {
-        tracksDao.removeTrackFromPlaylist(track.id, track.playlistId)
-    }
-
     override suspend fun updateTrackFavoriteStatus(track: Track, isFavorite: Boolean) {
         tracksDao.insertTrack(
             track.copy(favorite = isFavorite).toEntity()
-        )
-    }
-
-    override suspend fun getTracksByPlaylistId(playlistId: Long): List<Track> {
-        return emptyList()
-    }
-
-    override fun getTracksByPlaylistIdFlow(playlistId: Long): Flow<List<Track>> {
-        return tracksDao.getTracksByPlaylistId(playlistId)
-            .map { entities -> entities.map { it.toTrack() } }
-    }
-
-    override suspend fun clearPlaylistForTrack(track: Track) {
-        tracksDao.insertTrack(
-            track.copy(playlistId = 0).toEntity()
         )
     }
 
