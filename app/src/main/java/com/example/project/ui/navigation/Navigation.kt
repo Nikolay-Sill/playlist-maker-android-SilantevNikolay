@@ -7,7 +7,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import com.example.project.domain.Track
-import com.example.project.ui.activity.CreatePlaylistScreen
+import com.example.project.ui.activity.NewPlaylistScreen
 import com.example.project.ui.activity.FavoritesScreen
 import com.example.project.ui.activity.PlaylistDetailsScreen
 import com.example.project.ui.activity.PlaylistMakerScreen
@@ -16,6 +16,7 @@ import com.example.project.ui.activity.SearchScreen
 import com.example.project.ui.activity.SettingsScreen
 import com.example.project.ui.activity.TrackDetailsScreen
 import com.example.project.ui.view_model.FavoritesViewModel
+import com.example.project.ui.view_model.NewPlaylistViewModel
 import com.example.project.ui.view_model.PlaylistDetailsViewModel
 import com.example.project.ui.view_model.PlaylistsViewModel
 import com.example.project.ui.view_model.SearchViewModel
@@ -123,12 +124,13 @@ fun PlaylistHost() {
         }
 
         composable(Screen.CreatePlaylist.route) { backStackEntry ->
-            val playlistsViewModel: PlaylistsViewModel = koinViewModel()
+            val newPlaylistViewModel: NewPlaylistViewModel = koinViewModel()
 
-            CreatePlaylistScreen(
+            NewPlaylistScreen(
+                viewModel = newPlaylistViewModel,
                 onBackClick = { navController.popBackStack() },
-                onSaveClick = { name, desc ->
-                    playlistsViewModel.createNewPlaylist(name, desc)
+                onSaveClick = { name, desc, coverUri ->
+                    newPlaylistViewModel.createNewPlaylist(name, desc, coverUri)
                     navController.popBackStack()
                 }
             )

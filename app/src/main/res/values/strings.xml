@@ -42,6 +42,7 @@
     <string name="favorites_empty">Здесь будут ваши избранные треки</string>
 
     <string name="playlist_details_title">Плейлист</string>
+    <string name="playlist_cover">Обложка плейлиста</string>
 
     <string name="cd_back">Назад</string>
     <string name="cd_search">Поиск</string>

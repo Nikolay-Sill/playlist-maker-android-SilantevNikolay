@@ -43,10 +43,11 @@ class PlaylistsRepositoryImpl(
         }
     }
 
-    override suspend fun addNewPlaylist(name: String, description: String) {
+    override suspend fun addNewPlaylist(name: String, description: String, coverImageUri: String?) {
         val playlist = Playlist(
             name = name,
             description = description,
+            coverImageUri = coverImageUri,
             tracks = emptyList()
         )
         playlistsDao.insertPlaylist(

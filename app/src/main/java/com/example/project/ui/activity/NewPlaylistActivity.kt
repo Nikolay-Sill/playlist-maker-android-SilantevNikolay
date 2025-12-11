@@ -1,5 +1,12 @@
 package com.example.project.ui.activity
 
+import android.Manifest
+import android.content.Intent
+import android.content.pm.PackageManager
+import android.net.Uri
+import android.os.Build
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -27,12 +34,16 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.core.content.ContextCompat
+import coil.compose.AsyncImage
 import com.example.project.R
 import com.example.project.ui.theme.BackgroundGray
 import com.example.project.ui.theme.PrimaryBlue
@@ -41,15 +52,47 @@ import com.example.project.ui.theme.SurfaceWhite
 import com.example.project.ui.theme.TextPrimary
 import com.example.project.ui.theme.TextSecondary
 import com.example.project.ui.theme.White
+import com.example.project.ui.view_model.NewPlaylistViewModel
+import org.koin.compose.viewmodel.koinViewModel
+import androidx.core.net.toUri
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun CreatePlaylistScreen(
+fun NewPlaylistScreen(
+    viewModel: NewPlaylistViewModel,
     onBackClick: () -> Unit,
-    onSaveClick: (String, String) -> Unit
+    onSaveClick: (String, String, String?) -> Unit
 ) {
     val playlistName = remember { mutableStateOf("") }
     val playlistDescription = remember { mutableStateOf("") }
+    val coverImageUri = remember { mutableStateOf<String?>(null) }
+
+    val context = LocalContext.current
+
+    val imagePickerLauncher = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.OpenDocument()
+    ) { uri: Uri? ->
+        uri?.let {
+            try {
+                context.contentResolver.takePersistableUriPermission(
+                    it,
+                    Intent.FLAG_GRANT_READ_URI_PERMISSION
+                )
+            } catch (_: SecurityException) { }
+
+            coverImageUri.value = it.toString()
+            viewModel.setCoverImageUri(it.toString())
+        }
+    }
+
+
+    val permissionLauncher = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.RequestPermission()
+    ) { isGranted: Boolean ->
+        if (isGranted) {
+            imagePickerLauncher.launch(arrayOf("image/*"))
+        }
+    }
 
     val isButtonEnabled = playlistName.value.isNotBlank()
     val isNameFieldFocused = remember { mutableStateOf(false) }
@@ -103,14 +146,40 @@ fun CreatePlaylistScreen(
                     .fillMaxWidth()
                     .fillMaxHeight(0.5f)
                     .background(White)
-                    .clip(RoundedCornerShape(bottomStart = 16.dp, bottomEnd = 16.dp)),
+                    .clip(RoundedCornerShape(bottomStart = 16.dp, bottomEnd = 16.dp))
+                    .clickable {
+                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+                            imagePickerLauncher.launch(arrayOf("image/*"))
+                        } else {
+                            when {
+                                ContextCompat.checkSelfPermission(
+                                    context,
+                                    Manifest.permission.READ_EXTERNAL_STORAGE
+                                ) == PackageManager.PERMISSION_GRANTED -> {
+                                    imagePickerLauncher.launch(arrayOf("image/*"))
+                                }
+                                else -> {
+                                    permissionLauncher.launch(Manifest.permission.READ_EXTERNAL_STORAGE)
+                                }
+                            }
+                        }
+                    },
                 contentAlignment = Alignment.Center
             ) {
-                Image(
-                    painter = painterResource(id = R.drawable.ic_add_photo),
-                    contentDescription = stringResource(R.string.cd_add_photo),
-                    modifier = Modifier.size(100.dp)
-                )
+                if (coverImageUri.value != null) {
+                    AsyncImage(
+                        model = coverImageUri.value!!.toUri(),
+                        contentDescription = stringResource(R.string.playlist_cover),
+                        modifier = Modifier.fillMaxSize(),
+                        contentScale = ContentScale.Crop
+                    )
+                } else {
+                    Image(
+                        painter = painterResource(id = R.drawable.ic_add_photo),
+                        contentDescription = stringResource(R.string.cd_add_photo),
+                        modifier = Modifier.size(100.dp)
+                    )
+                }
             }
 
             Column(
@@ -189,7 +258,7 @@ fun CreatePlaylistScreen(
                         )
                         .clickable {
                             if (isButtonEnabled) {
-                                onSaveClick(playlistName.value, playlistDescription.value)
+                                onSaveClick(playlistName.value, playlistDescription.value, coverImageUri.value)
                             }
                         },
                     contentAlignment = Alignment.Center
@@ -210,9 +279,10 @@ fun CreatePlaylistScreen(
 @Composable
 fun CreatePlaylistScreenPreview() {
     ProjectTheme {
-        CreatePlaylistScreen(
+        NewPlaylistScreen(
+            viewModel = koinViewModel(),
             onBackClick = {},
-            onSaveClick = { _, _ -> }
+            onSaveClick = { _, _, _ -> }
         )
     }
 }

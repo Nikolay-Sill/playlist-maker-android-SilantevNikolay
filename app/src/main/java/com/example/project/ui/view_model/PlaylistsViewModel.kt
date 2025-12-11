@@ -26,12 +26,6 @@ class PlaylistsViewModel(
         }
     }
 
-    fun createNewPlaylist(name: String, description: String) {
-        viewModelScope.launch {
-            playlistsRepository.addNewPlaylist(name, description)
-        }
-    }
-
     fun deletePlaylist(id: Long) {
         viewModelScope.launch {
             playlistsRepository.deletePlaylistById(id)
